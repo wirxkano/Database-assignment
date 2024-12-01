@@ -1,9 +1,12 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
+const flowbite = require("flowbite-react/tailwind");
+
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
+    flowbite.content()
   ],
   theme: {
     extend: {
@@ -24,6 +27,7 @@ export default {
   },
   plugins: [
     require('@tailwindcss/forms'),
+    flowbite.plugin(),
   ],
 }
 
