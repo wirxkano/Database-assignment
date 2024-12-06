@@ -4,6 +4,33 @@ import smartphone2 from '~/assets/smartphone-cat.png';
 import smarttv from '~/assets/smartTV-cat.png';
 import mouse from '~/assets/mouse-cat.png';
 
+export const userData = {
+  firstName: 'John',
+  lastName: 'Doe',
+  gender: 'M',
+  dob: '1/1/2000',
+  phone: '123-45-678',
+  email: 'john.doe@company.com',
+  addresses: [
+    {
+      id: 1,
+      label: 'Home',
+      street: '123 Main St',
+      commune: '14',
+      district: 'D1',
+      city: 'HCM',
+    },
+    {
+      id: 2,
+      label: 'Work',
+      street: '456 Office Blvd',
+      commune: '10',
+      district: 'D3',
+      city: 'HCM',
+    },
+  ],
+};
+
 export const categoryData = [
   {
     id: 1,
@@ -127,3 +154,77 @@ export const productData = [
     discount_price: '999.999'
   }
 ];
+
+export const orderData = [
+  {
+    OrderID: 1,
+    Status: 'COMPLETED',
+    Name: 'Macbook Pro 14-inch',
+    CategoryName: 'Laptop',
+    Quantity: 1,
+    PriceAtOrderedTime: '40.000.000',
+    TotalPrice: '40.000.000',
+    TotalPriceOfOrder: '40.000.000'
+  },
+  {
+    OrderID: 2,
+    Status: 'PENDING',
+    Name: 'iPhone 14 Pro Max',
+    CategoryName: 'Smartphone',
+    Quantity: 1,
+    PriceAtOrderedTime: '35.000.000',
+    TotalPrice: '35.000.000',
+    TotalPriceOfOrder: '35.000.000'
+  },
+  {
+    OrderID: 3,
+    Status: 'CANCELLED',
+    Name: 'Samsung Galaxy Tab S8',
+    CategoryName: 'Tablet',
+    Quantity: 1,
+    PriceAtOrderedTime: '20.000.000',
+    TotalPrice: '20.000.000',
+    TotalPriceOfOrder: '20.000.000'
+  },
+  {
+    OrderID: 4,
+    Status: 'PROCESSING',
+    Name: 'Sony WH-1000XM5',
+    CategoryName: 'Headphones',
+    Quantity: 2,
+    PriceAtOrderedTime: '8.000.000',
+    TotalPrice: '16.000.000',
+    TotalPriceOfOrder: '16.000.000'
+  },
+  {
+    OrderID: 5,
+    Status: 'DELIVERED',
+    Name: 'Dell XPS 13',
+    CategoryName: 'Laptop',
+    Quantity: 1,
+    PriceAtOrderedTime: '45.000.000',
+    TotalPrice: '45.000.000',
+    TotalPriceOfOrder: '45.000.000'
+  },
+  {
+    OrderID: 6,
+    Status: 'COMPLETED',
+    Name: 'Apple Watch Series 8',
+    CategoryName: 'Smartwatch',
+    Quantity: 1,
+    PriceAtOrderedTime: '12.000.000',
+    TotalPrice: '12.000.000',
+    TotalPriceOfOrder: '12.000.000'
+  },
+  {
+    OrderID: 7,
+    Status: 'PENDING',
+    Name: 'Logitech MX Master 3S',
+    CategoryName: 'Mouse',
+    Quantity: 1,
+    PriceAtOrderedTime: '2.500.000',
+    TotalPrice: '2.500.000',
+    TotalPriceOfOrder: '2.500.000'
+  }
+];
+

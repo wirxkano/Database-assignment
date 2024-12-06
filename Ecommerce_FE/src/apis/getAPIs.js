@@ -1,4 +1,10 @@
-import { categoryData, productData, trendingProductData } from '~/data/mockData';
+import { categoryData, orderData, productData, trendingProductData, userData } from '~/data/mockData';
+
+export async function userLoader() {
+  const user = userData;
+
+  return { user };
+}
 
 export async function homeLoader() {
   const categories = categoryData;
@@ -6,4 +12,10 @@ export async function homeLoader() {
   const products = productData;
   
   return { categories, trendingProducts, products };
+}
+
+export async function orderLoader() {
+  const orders = orderData;
+
+  return { orders };
 }
