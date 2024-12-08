@@ -5,11 +5,11 @@ export function splitName(fullName) {
   let firstName = "";
   
   if (nameParts.length === 1) {
-    lastName = nameParts[0]; 
-    firstName = "";
+    firstName = nameParts[0]; 
+    lastName = "";
   } else {
-    lastName = nameParts[0];
-    firstName = nameParts.slice(1).join(" ");
+    firstName = nameParts[0];
+    lastName = nameParts.slice(1).join(" ");
   }
   return { lastName, firstName };
 }

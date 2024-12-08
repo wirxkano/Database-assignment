@@ -3,7 +3,7 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 
-function InputForm({ id, name, type, placeholder }) {
+function InputForm({ id, name, type, placeholder, onChange }) {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   return (
@@ -14,6 +14,7 @@ function InputForm({ id, name, type, placeholder }) {
         type={type === "password" ? isPasswordShown ? "text" : "password" : type}
         required
         placeholder={placeholder}
+        onChange={onChange}
         className="px-3 block w-full h-11 rounded-xl border-none bg-gray-100 py-1.5 text-gray-900 shadow-sm ring-inset outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-300 sm:text-sm/6"
       />
       {type === "password" && (

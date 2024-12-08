@@ -9,7 +9,8 @@ const sqlConfig = {
   options: {
     encrypt: false,
     trustServerCertificate: true,
-  },
+    enableArithAbort: true
+  }
 }
 
 let pool

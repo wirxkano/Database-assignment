@@ -1,40 +1,55 @@
 import { useState } from "react";
-import { Form, useLoaderData } from "react-router-dom";
+import { Form, useLoaderData, useNavigate } from "react-router-dom";
+import { deleteAccount } from '~/apis/deleteAPIs';
+import { updateInfoAction } from '~/apis/putAPIs';
 import Navbar from "~/components/Navbar";
 
 function UserInfo() {
+  const navigate = useNavigate();
   const { user } = useLoaderData();
   const [userInfo, setUserInfo] = useState(user);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [addressChanges, setAddressChanges] = useState([]);
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
+    const { name, value } = e.target;
     setUserInfo((prev) => ({
       ...prev,
-      [id]: value,
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditing(false); // Disable editing after submission
+    console.log({ ...userInfo, addressChanges });
+
+    const response = await updateInfoAction({ ...userInfo, addressChanges });
+
+    if (response.status === 200) {
+      setAddressChanges([]);
+      setIsEditing(false);
+    }
   };
 
   const handleAddAddress = () => {
+    const newAddress = {
+      id: Date.now(),
+      street: "",
+      commune: "",
+      district: "",
+      city: "",
+      action: "add"
+    };
     setUserInfo((prevState) => ({
       ...prevState,
-      addresses: [
-        ...prevState.addresses,
-        {
-          id: Date.now(), // Unique ID for the address
-          label: "",
-          street: "",
-          commune: "",
-          district: "",
-          city: "",
-        },
-      ],
+      addresses: [...prevState.addresses, newAddress],
     }));
+
+    setAddressChanges((prevState) => [
+      ...prevState,
+      { id: newAddress.id, action: "add", data: newAddress },
+    ]);
   };
 
   const handleAddressChange = (e, index) => {
@@ -45,15 +60,60 @@ function UserInfo() {
       );
       return { ...prevState, addresses: updatedAddresses };
     });
+
+    setAddressChanges((prevState) => {
+      const existingChange = prevState.find(
+        (change) => change.id === userInfo.addresses[index].id
+      );
+
+      if (existingChange) {
+        return prevState.map((change) =>
+          change.id === userInfo.addresses[index].id
+            ? { ...change, data: { ...change.data, [name]: value } }
+            : change
+        );
+      }
+    });
   };
 
   const handleRemoveAddress = (index) => {
+    const addressToRemove = userInfo.addresses[index];
+
     setUserInfo((prevState) => {
       const updatedAddresses = prevState.addresses.filter(
         (_, idx) => idx !== index
       );
+
       return { ...prevState, addresses: updatedAddresses };
     });
+
+    setAddressChanges((prevState) => {
+      if (addressToRemove.action === "add") {
+        return prevState.filter((change) => change.id !== addressToRemove.id);
+      }
+
+      return [
+        ...prevState,
+        { id: addressToRemove.id, action: "delete" },
+      ];
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    const response = await deleteAccount();
+
+    if (response.status === 200) {
+      sessionStorage.setItem('infoMessage', 'Tài khoản của bạn đã bị xóa.');
+      navigate("/login");
+    }
+    
+  };
+
+  const formatDate = (date) => {
+    if (date !== 'N/A') {
+      const [year, month, day] = date.split('-');
+      return `${day}/${month}/${year}`;
+    }
   };
 
   return (
@@ -68,15 +128,16 @@ function UserInfo() {
                 <div className="grid gap-6 mb-6 md:grid-cols-2">
                   <div>
                     <label
-                      htmlFor="firstName"
+                      htmlFor="fullName"
                       className="block mb-2 text-sm font-medium text-gray-900"
                     >
-                      Họ
+                      Họ và tên
                     </label>
                     <input
                       type="text"
-                      id="firstName"
-                      value={userInfo.firstName}
+                      name="fullName"
+                      id="fullName"
+                      value={userInfo.fullName}
                       onChange={handleInputChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       required
@@ -84,18 +145,18 @@ function UserInfo() {
                   </div>
                   <div>
                     <label
-                      htmlFor="lastName"
+                      htmlFor="dob"
                       className="block mb-2 text-sm font-medium text-gray-900"
                     >
-                      Tên
+                      Ngày sinh
                     </label>
                     <input
-                      type="text"
-                      id="lastName"
-                      value={userInfo.lastName}
+                      type="date"
+                      name="dob"
+                      id="dob"
+                      value={userInfo.dob || ""}
                       onChange={handleInputChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      required
                     />
                   </div>
                   <div>
@@ -107,6 +168,7 @@ function UserInfo() {
                     </label>
                     <input
                       type="tel"
+                      name="phone"
                       id="phone"
                       value={userInfo.phone}
                       onChange={handleInputChange}
@@ -116,19 +178,22 @@ function UserInfo() {
                   </div>
                   <div>
                     <label
-                      htmlFor="email"
+                      htmlFor="gender"
                       className="block mb-2 text-sm font-medium text-gray-900"
                     >
-                      Địa chỉ email
+                      Giới tính
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={userInfo.email}
+                    <select
+                      name="gender"
+                      id="gender"
+                      value={userInfo.gender}
                       onChange={handleInputChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      required
-                    />
+                    >
+                      <option value="N/A">Không</option>
+                      <option value={true}>Nam</option>
+                      <option value={false}>Nữ</option>
+                    </select>
                   </div>
                 </div>
 
@@ -142,18 +207,6 @@ function UserInfo() {
                       key={address.id}
                       className="mb-4 border p-4 rounded-lg bg-gray-50"
                     >
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Loại địa chỉ
-                      </label>
-                      <input
-                        type="text"
-                        name="label"
-                        value={address.label}
-                        onChange={(e) => handleAddressChange(e, index)}
-                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-full mb-2 p-2.5"
-                        placeholder="Home, Work, etc."
-                      />
-
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Tên đường
                       </label>
@@ -292,10 +345,10 @@ function UserInfo() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-gray-600">
-                    <strong>Họ:</strong> {userInfo.firstName}
+                    <strong>Họ và tên:</strong> {userInfo.fullName}
                   </p>
                   <p className="text-gray-600 mt-2">
-                    <strong>Tên:</strong> {userInfo.lastName}
+                    <strong>Ngày sinh:</strong> {formatDate(userInfo.dob) || "N/A"}
                   </p>
                 </div>
                 <div>
@@ -312,12 +365,48 @@ function UserInfo() {
                   <div key={address.id} className="mt-2">
                     <p className="text-gray-600">
                       <strong>Địa chỉ:</strong>{" "}
-                      {`${address.label}, ${address.street}, Phường ${address.commune}, Quận ${address.district}, ${address.city}`}
+                      {`${address.street}, ${address.commune}, ${address.district}, ${address.city}`}
                     </p>
                   </div> // Ensure this closing tag exists for the mapped div
                 ))}
               </div>
             </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsDelete(true)}
+                className="text-primary-500 hover:text-primary-700 font-medium mt-4"
+              >
+                Xóa tài khoản
+              </button>
+            </div>
+
+            {isDelete && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white rounded-md shadow-lg p-6 w-96">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Bạn có chắc chắn muốn xóa tài khoản không?
+                  </h3>
+                  <p className="text-gray-700 mt-2">
+                    Tài khoản sẽ bị xóa vĩnh viễn và không thể khôi phục lại.
+                  </p>
+                  <div className="mt-4 flex justify-end space-x-4">
+                    <button
+                      onClick={() => setIsDelete(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

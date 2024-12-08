@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import arya from "~/assets/Arya-Logo-Lg.png";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
+import { logoutAction } from '~/apis/postAPIs';
 
 function Navbar() {
   const [userPopup, setUserPopup] = useState(false);
@@ -12,6 +13,15 @@ function Navbar() {
   useEffect(() => {
     setIsLoggedIn(sessionStorage.getItem("isLoggedIn") === "true");
   }, []);
+
+  const handleLogout = async () => {
+    const response = await logoutAction();
+    if (response.status === 200) {
+      sessionStorage.removeItem("isLoggedIn");
+      setIsLoggedIn(false);
+      navigate("/login");
+    }
+  }
 
   return (
     <div>
@@ -35,11 +45,10 @@ function Navbar() {
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className={`block py-2 px-3 rounded ${
-                      location.pathname === item.path
-                        ? "text-red-500"
-                        : "text-gray-900"
-                    } hover:bg-gray-100 hover:text-primary-500 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white md:dark:hover:text-primary-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent`}
+                    className={`block py-2 px-3 rounded ${location.pathname === item.path
+                      ? "text-red-500"
+                      : "text-gray-900"
+                      } hover:bg-gray-100 hover:text-primary-500 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white md:dark:hover:text-primary-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent`}
                     aria-current={
                       location.pathname === item.path ? "page" : undefined
                     }
@@ -72,11 +81,7 @@ function Navbar() {
                     </Link>
                     <hr />
                     <div
-                      onClick={() => {
-                        sessionStorage.removeItem("isLoggedIn");
-                        setIsLoggedIn(false);
-                        navigate("/login");
-                      }}
+                      onClick={handleLogout}
                       className="block px-2 py-2 text-primary-500 hover:bg-red-100 rounded cursor-pointer"
                     >
                       Đăng xuất

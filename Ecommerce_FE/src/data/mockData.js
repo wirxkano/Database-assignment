@@ -5,10 +5,9 @@ import smarttv from '~/assets/smartTV-cat.png';
 import mouse from '~/assets/mouse-cat.png';
 
 export const userData = {
-  firstName: 'John',
-  lastName: 'Doe',
+  fullName: 'John Doe',
   gender: 'M',
-  dob: '1/1/2000',
+  dob: '2000-01-01',
   phone: '123-45-678',
   email: 'john.doe@company.com',
   addresses: [

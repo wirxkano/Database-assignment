@@ -4,6 +4,7 @@ import { env } from '~/config/env';
 import { API } from '~/routes/index';
 import { connectToDB } from '~/config/connectDB';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const SERVER = () => {
   const app = express();
@@ -15,6 +16,7 @@ const SERVER = () => {
   };
 
   app.use(cors(corsOptions));
+  app.use(cookieParser());
 
   app.use(express.json());
   app.use('/api', API);

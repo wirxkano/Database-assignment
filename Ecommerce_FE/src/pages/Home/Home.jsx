@@ -1,10 +1,11 @@
 import Slider from '~/components/Slider';
 import Navbar from '~/components/Navbar';
 import Category from '~/components/Category';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Form, Link, useLoaderData } from 'react-router-dom';
 import Product from '~/components/Product';
 import Banner from '~/components/Banner';
 import { useEffect, useState } from 'react';
+import { viewTrendingProducts } from '~/apis/postAPIs';
 
 function Home() {
   const { categories, trendingProducts, products } = useLoaderData();
@@ -18,18 +19,76 @@ function Home() {
     return () => clearInterval(timer);
   }, [trendingProducts.length]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const data = {
+      startDate: formData.get('start-date'),
+      endDate: formData.get('end-date'),
+      n: formData.get('top-n'),
+    };
+
+    const response = await viewTrendingProducts(data);
+
+    console.log(response);
+
+    if (response.status === 200) {
+      // handle set new trending products
+    }
+
+  }
+
   return (
     <div>
       <Navbar />
       <Slider />
-      <div className="w-full h-96 bg-gray-100 flex items-center justify-center gap-4">
-        {categories.map((category) => (
-          <Category key={category.id} category={category} />
-        ))}
+      <div className="w-full h-auto bg-gray-100 py-12">
+        <p className="font-bold text-2xl text-gray-800 text-center mb-12">Danh mục</p>
+        <div className="flex items-center justify-center gap-4">
+          {categories.map((category) => (
+            <Category key={category.id} category={category} />
+          ))}
+        </div>
       </div>
 
-     <div className="w-full h-auto mb-12 px-16">
-        <p className="font-bold text-2xl text-gray-800 text-center my-16">Sản phẩm bán chạy</p>
+      <div className="w-full h-auto mb-12 px-16">
+        <p className="font-bold text-2xl text-gray-800 text-center mt-16 mb-8">Sản phẩm bán chạy</p>
+        <Form className="w-full flex items-center justify-center gap-4 mb-12" onSubmit={handleSubmit}>
+          <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">
+            Từ ngày
+          </label>
+          <input
+            type="date"
+            name="start-date"
+            id="start-date"
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
+          />
+          <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">
+            Đến ngày
+          </label>
+          <input
+            type="date"
+            name="end-date"
+            id="end-date"
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
+          />
+          <input
+            type="number"
+            min="1"
+            max="10"
+            name="top-n"
+            className="border border-gray-300 rounded-md px-4 py-2 w-40 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
+            placeholder="Số lượng"
+          />
+          <button
+            className="bg-primary-500 text-white px-6 py-2 rounded-md hover:bg-primary-600 transition-all duration-300"
+          >
+            Tìm kiếm
+          </button>
+        </Form>
+
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-1000 ease-in-out"

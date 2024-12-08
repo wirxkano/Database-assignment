@@ -7,7 +7,7 @@ const getAllProducts = async () => {
   return result.recordset;
 };
 
-const getTrendingProducts = async (startDate, endDate, n) => {
+const retrieveTrendingProducts = async (startDate, endDate, n) => {
   const pool = getConnection();
 
   const result = await pool
@@ -17,10 +17,13 @@ const getTrendingProducts = async (startDate, endDate, n) => {
     .input("N", sql.Int, n)
     .execute("retrieveBestSellingProducts");
 
-  return result.recordset;
+  if (result.recordset.length >= 0) {
+    return result.recordset[0];
+  }
+  return null;
 };
 
 export const ProductModel = {
   getAllProducts,
-  getTrendingProducts,
+  retrieveTrendingProducts
 };

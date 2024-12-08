@@ -3,6 +3,6 @@ import { ProductController } from '~/controllers/ProductController';
 
 const router = express.Router();
 
-router.get('/trending', ProductController.getTrendingProducts);
+router.post('/trending', ProductController.retrieveTrendingProducts);
 
 export const ProductRoutes = router;
