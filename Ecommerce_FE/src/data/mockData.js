@@ -59,100 +59,122 @@ export const categoryData = [
 
 export const trendingProductData = [
   {
-    id: 1,
-    name: 'Macbook',
-    img: laptop,
-    selling_price: '100.000',
-    discount_price: '50.000'
+    ProductID: 1,
+    Name: 'Macbook',
+    ImgUrl: laptop,
+    SellingPrice: '100.000',
+    DiscountPrice: '50.000',
+    Quantity: 10
   },
   {
-    id: 2,
-    name: 'Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 2,
+    Name: 'Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   },
   {
-    id: 3,
-    name: 'TV không biết hiệu gì',
-    img: smarttv,
-    selling_price: '2.000',
-    discount_price: '1.999'
+    ProductID: 3,
+    Name: 'TV không biết hiệu gì',
+    ImgUrl: smarttv,
+    SellingPrice: '2.000',
+    DiscountPrice: '1.999',
+    Quantity: 10
   },
   {
-    id: 4,
-    name: 'Chuột Mickey',
-    img: mouse,
-    selling_price: '1.000.000.000',
-    discount_price: 'Null'
+    ProductID: 4,
+    Name: 'Chuột Mickey',
+    ImgUrl: mouse,
+    SellingPrice: '1.000.000.000',
+    DiscountPrice: 'Null',
+    Quantity: 10
   },
   {
-    id: 5,
-    name: 'Chuột Mickey',
-    img: mouse,
-    selling_price: '1.000.000.000',
-    discount_price: 'Null'
+    ProductID: 5,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
+  },
+  {
+    ProductID: 6,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   }
 ];
 
 export const productData = [
   {
-    id: 1,
-    name: 'Macbook',
-    img: laptop,
-    selling_price: '100.000',
-    discount_price: '50.000'
+    ProductID: 1,
+    Name: 'Macbook',
+    ImgUrl: laptop,
+    SellingPrice: '100.000',
+    DiscountPrice: '50.000',
+    Quantity: 10
   },
   {
-    id: 2,
-    name: 'Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 2,
+    Name: 'Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   },
   {
-    id: 3,
-    name: 'TV không biết hiệu gì',
-    img: smarttv,
-    selling_price: '2.000',
-    discount_price: '1.999'
+    ProductID: 3,
+    Name: 'TV không biết hiệu gì',
+    ImgUrl: smarttv,
+    SellingPrice: '2.000',
+    DiscountPrice: '1.999',
+    Quantity: 10
   },
   {
-    id: 4,
-    name: 'Chuột Mickey',
-    img: mouse,
-    selling_price: '1.000.000.000',
-    discount_price: 'Null'
+    ProductID: 4,
+    Name: 'Chuột Mickey',
+    ImgUrl: mouse,
+    SellingPrice: '1.000.000.000',
+    DiscountPrice: 'Null',
+    Quantity: 10
   },
   {
-    id: 5,
-    name: 'Vẫn là Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 5,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   },
   {
-    id: 6,
-    name: 'Vẫn là Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 6,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   },
   {
-    id: 7,
-    name: 'Vẫn là Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 7,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   },
   {
-    id: 8,
-    name: 'Vẫn là Iphone',
-    img: smartphone2,
-    selling_price: '1.000.000',
-    discount_price: '999.999'
+    ProductID: 8,
+    Name: 'Vẫn là Iphone',
+    ImgUrl: smartphone2,
+    SellingPrice: '1.000.000',
+    DiscountPrice: '999.999',
+    Quantity: 10
   }
 ];
+
 
 export const orderData = [
   {
@@ -224,6 +246,50 @@ export const orderData = [
     PriceAtOrderedTime: '2.500.000',
     TotalPrice: '2.500.000',
     TotalPriceOfOrder: '2.500.000'
+  },
+  {
+    OrderID: 8,
+    Status: 'PENDING',
+    Name: 'Logitech MX Master 3S',
+    CategoryName: 'Mouse',
+    Quantity: 1,
+    PriceAtOrderedTime: '2.500.000',
+    TotalPrice: '2.500.000',
+    TotalPriceOfOrder: '2.500.000'
+  },
+  {
+    OrderID: 8,
+    Status: 'PENDING',
+    Name: 'Logitech MX Master 3S',
+    CategoryName: 'Mouse',
+    Quantity: 1,
+    PriceAtOrderedTime: '2.500.000',
+    TotalPrice: '2.500.000',
+    TotalPriceOfOrder: '2.500.000'
+  },
+  {
+    OrderID: 8,
+    Status: 'PENDING',
+    Name: 'Logitech MX Master 3S',
+    CategoryName: 'Mouse',
+    Quantity: 1,
+    PriceAtOrderedTime: '2.500.000',
+    TotalPrice: '2.500.000',
+    TotalPriceOfOrder: '2.500.000'
   }
 ];
+
+export const productDetailData = {
+  ProductID: 1,
+  Name: 'Macbook',
+  Description: 'Laptop hiệu suất cao dành cho người dùng chuyên nghiệp.',
+  ImgUrl: laptop,
+  SellingPrice: '100.000',
+  DiscountPrice: '50.000',
+  Quantity: 10,
+  AverageRate: 5.0,
+  BrandName: 'Apple',
+  Country: 'Mỹ',
+  CategoryName: 'Laptop'
+};
 

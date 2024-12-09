@@ -11,5 +11,5 @@ export function splitName(fullName) {
     firstName = nameParts[0];
     lastName = nameParts.slice(1).join(" ");
   }
-  return { lastName, firstName };
+  return { firstName, lastName };
 }

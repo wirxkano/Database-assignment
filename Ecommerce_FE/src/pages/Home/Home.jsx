@@ -2,7 +2,7 @@ import Slider from '~/components/Slider';
 import Navbar from '~/components/Navbar';
 import Category from '~/components/Category';
 import { Form, Link, useLoaderData } from 'react-router-dom';
-import Product from '~/components/Product';
+import Product from '~/pages/Product/Product';
 import Banner from '~/components/Banner';
 import { useEffect, useState } from 'react';
 import { viewTrendingProducts } from '~/apis/postAPIs';

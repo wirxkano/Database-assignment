@@ -7,6 +7,8 @@ import Home from '~/pages/Home/Home'
 import Register from '~/pages/Register/Register'
 import UserInfo from '~/pages/UserInfo/UserInfo'
 import Order from '~/pages/Order/Order'
+import ProductDetail from '~/pages/Product/ProductDetail'
+import Payment from '~/pages/Payment/Payment'
 
 export const router = createBrowserRouter([
   {
@@ -37,5 +39,15 @@ export const router = createBrowserRouter([
     element: <Order />,
     errorElement: <ErrorPage />,
     loader: orderLoader,
+  },
+  {
+    path: '/products/:id',
+    element: <ProductDetail />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: '/payment',
+    element: <Payment />,
+    errorElement: <ErrorPage />
   }
 ])

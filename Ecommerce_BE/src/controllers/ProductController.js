@@ -26,7 +26,23 @@ const retrieveTrendingProducts = async (req, res) => {
   }
 }
 
+const getProductDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await ProductModel.getProductDetails(id);
+
+    if (product) {
+      return res.status(200).json(product);
+    } else {
+      return res.status(400).json({ message: 'Failed to get product details' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export const ProductController = {
   getAllProducts,
-  retrieveTrendingProducts
+  retrieveTrendingProducts,
+  getProductDetails
 };
