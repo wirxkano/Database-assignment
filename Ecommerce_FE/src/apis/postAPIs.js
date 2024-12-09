@@ -6,7 +6,7 @@ export async function loginAction({ request }) {
   const formData = await request.formData();
   const data = {
     email: formData.get('email'),
-    password: formData.get('password'),
+    password: formData.get('password')
   }
 
   const response = await axiosInstance.post('users/login', data);
@@ -21,14 +21,14 @@ export async function loginAction({ request }) {
 
 export async function registerAction({ request }) {
   const formData = await request.formData();
-  const { lastName, firstName } = splitName(formData.get('name'));
+  const { firstName, lastName } = splitName(formData.get('name'));
 
   const data = {
     lastName: lastName,
     firstName: firstName,
     email: formData.get('email'),
     password: formData.get('password'),
-    confirmPassword: formData.get('confirm-password'),
+    confirmPassword: formData.get('confirm-password')
   };
 
   const response = await axiosInstance.post('users/register', data);
@@ -47,6 +47,12 @@ export async function logoutAction() {
 
 export async function viewTrendingProducts(data) {
   const response = await axiosInstance.post('/products/trending', data);
+  
+  return response;
+}
+
+export async function makeOrder(data) {
+  const response = await axiosInstance.post('/orders/purchase', data);
   
   return response;
 }

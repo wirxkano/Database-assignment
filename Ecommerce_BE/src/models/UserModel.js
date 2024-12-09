@@ -25,7 +25,6 @@ const register = async (firstName, lastName, email, password, confirmPassword) =
 
 const login = async (email, password) => {
   const pool = getConnection();
-
   try {
     const result = await pool
       .request()
@@ -45,7 +44,6 @@ const login = async (email, password) => {
 
 const getInfo = async (id) => {
   const pool = getConnection();
-
   try {
     const result = await pool
       .request()
@@ -70,7 +68,6 @@ const getInfo = async (id) => {
 
 const updateInfo = async (id, data) => {
   const pool = getConnection();
-
   try {
     const addressChanges = new sql.Table();
     addressChanges.columns.add('Action', sql.NVarChar(10));
@@ -115,7 +112,6 @@ const updateInfo = async (id, data) => {
 
 const deleteAccount = async (id) => {
   const pool = getConnection();
-
   try {
     const result = await pool
       .request()

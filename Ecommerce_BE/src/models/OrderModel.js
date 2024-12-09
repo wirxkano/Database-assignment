@@ -1,0 +1,91 @@
+import { getConnection, sql } from '~/config/connectDB';
+
+const getHistory = async (id, status) => {
+  const pool = getConnection();
+
+  try {
+    const result = await pool
+      .request()
+      .input('CustomerID', sql.Int, id)
+      .input('Status', sql.NVarChar, status)
+      .execute('DisplayOrderByStatusOrSeachOrder');
+
+    if (result.returnValue >= 0) {
+      return result.recordset;
+    }
+
+    return 0;
+  } catch (err) {
+    throw new Error(err)
+  }
+};
+
+const searchOrder = async (customerID, orderID) => {
+  const pool = getConnection();
+
+  try {
+    const result = await pool
+      .request()
+      .input('CustomerID', sql.Int, customerID)
+      .input('SearchOrder', sql.Bit, 1)
+      .input('OrderID', sql.Int, orderID)
+      .execute('DisplayOrderByStatusOrSeachOrder');
+
+    if (result.returnValue >= 0) {
+      return result.recordset;
+    }
+
+    return 0;
+  } catch (err) {
+    throw new Error(err)
+  }
+};
+
+const storeOrder = async (customerID, data, status = 'Processing') => {
+  const pool = getConnection();
+  
+  try {
+    const orderResult = await pool
+      .request()
+      .input('CustomerID', sql.Int, customerID)
+      .input('Status', sql.NVarChar, status)
+      .input('Street', sql.NVarChar, data.selectedAddress.street)
+      .input('Commune', sql.NVarChar, data.selectedAddress.commune)
+      .input('District', sql.NVarChar, data.selectedAddress.district)
+      .input('City', sql.NVarChar, data.selectedAddress.city)
+      .input('CreatedAt', sql.DateTime, new Date())
+      .query(`
+        INSERT INTO [Order] (Status, Street, Commune, District, City, CreatedAt, CustomerID)
+        OUTPUT INSERTED.OrderID
+        VALUES (@Status, @Street, @Commune, @District, @City, @CreatedAt, @CustomerID)
+      `);
+
+    const orderID = orderResult.recordset[0].OrderID;
+    const orderDetailsResult = await pool
+      .request()
+      .input('OrderID', sql.Int, orderID)
+      .input('ProductID', sql.Int, data.product.productId)
+      .input('Quantity', sql.Int, data.product.numberPurchase)
+      .input('PriceAtOrderedTime', sql.Int, data.product.priceAtOrderedTime)
+      .query(`
+        INSERT INTO OrderProduct (OrderID, ProductID, Quantity, PriceAtOrderedTime)
+        VALUES (@OrderID, @ProductID, @Quantity, @PriceAtOrderedTime)
+      `);
+
+    if (orderResult.rowsAffected[0] > 0 && orderDetailsResult.rowsAffected[0] > 0) {
+      return 1;
+    }
+
+    return 0;
+  } catch (err) {
+    console.log(err);
+    
+    throw new Error(err)
+  }
+};
+
+export const OrderModel = {
+  getHistory,
+  searchOrder,
+  storeOrder
+};
