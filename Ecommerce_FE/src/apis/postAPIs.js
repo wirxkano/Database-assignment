@@ -45,7 +45,7 @@ export async function logoutAction() {
   return response;
 }
 
-export async function viewTrendingProducts(data) {
+export async function retrieveTrendingProducts(data) {
   const response = await axiosInstance.post('/products/trending', data);
   
   return response;

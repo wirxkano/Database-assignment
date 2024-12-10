@@ -1,18 +1,17 @@
 import { axiosInstance } from './axiosInstance';
-import { categoryData, trendingProductData } from '~/data/mockData';
+import { categoryData } from '~/data/mockData';
 
 export async function userLoader() {
-  const user = (await axiosInstance.get('/users/info')).data.user;
-  
+  const user = (await axiosInstance.get("/users/info")).data.user;
+
   return { user };
 }
 
 export async function homeLoader() {
   const categories = categoryData;
-  const trendingProducts = trendingProductData;
   const products = (await axiosInstance.get('/products/all')).data;
 
-  return { categories, trendingProducts, products };
+  return { categories, products };
 }
 
 export async function productDetailsLoader(id) {
@@ -22,7 +21,8 @@ export async function productDetailsLoader(id) {
 }
 
 export async function orderLoader() {
-  const orders = (await axiosInstance.get('/orders/history?status=All')).data.orders;
+  const orders = (await axiosInstance.get("/orders/history?status=All")).data
+    .orders;
 
   return { orders };
 }

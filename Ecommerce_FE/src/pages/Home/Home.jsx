@@ -5,13 +5,14 @@ import { Form, useLoaderData } from 'react-router-dom';
 import Product from '~/pages/Product/Product';
 import Banner from '~/components/Banner';
 import { useEffect, useState } from 'react';
-import { viewTrendingProducts } from '~/apis/postAPIs';
+import { retrieveTrendingProducts } from '~/apis/postAPIs';
 import Pagination from '~/components/Pagination/Pagination';
 
 function Home() {
-  const { categories, trendingProducts, products } = useLoaderData();
+  const { categories, products } = useLoaderData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [trendingProducts, setTrendingProducts] = useState([]);
   const pageSize = 9;
 
   useEffect(() => {
@@ -21,6 +22,17 @@ function Home() {
 
     return () => clearInterval(timer);
   }, [trendingProducts.length]);
+
+  useEffect(() => {
+    const fetchBestSellingProducts = async () => {
+      const response = await retrieveTrendingProducts({ startDate: '2024-04-10', endDate: '2024-10-20', n: '5' });
+
+      if (response.status === 200) {
+        setTrendingProducts(response.data);
+      }
+    }
+    fetchBestSellingProducts();
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,12 +45,13 @@ function Home() {
       n: formData.get('top-n'),
     };
 
-    const response = await viewTrendingProducts(data);
+    const response = await retrieveTrendingProducts(data);
 
     console.log(response);
 
     if (response.status === 200) {
       // handle set new trending products
+      setTrendingProducts(response.data);
     }
 
   }
@@ -82,27 +95,44 @@ function Home() {
             min="1"
             max="10"
             name="top-n"
+            value="5"
             className="border border-gray-300 rounded-md px-4 py-2 w-40 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
             placeholder="Số lượng"
           />
           <button
             className="bg-primary-500 text-white px-6 py-2 rounded-md hover:bg-primary-600 transition-all duration-300"
+            type="submit"
           >
             Tìm kiếm
           </button>
         </Form>
+
+        <div className="flex justify-center">
+          {trendingProducts.length <= 4 && trendingProducts.map((product, index) => (
+            <div key={index} className="w-1/4">
+              <Product product={product} />
+              <div className="text-center text-gray-600 font-medium">Số lượng đã bán: {product.TotalSold}</div>
+            </div>
+          ))}
+        </div>
 
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-1000 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 25}%)` }}
           >
-            {trendingProducts.concat(trendingProducts.slice(0, 4)).map((product, index) => (
+            {trendingProducts.length > 4 && trendingProducts.concat(trendingProducts.slice(0, 4)).map((product, index) => (
               <div key={index} className="w-1/4 flex-shrink-0">
                 <Product product={product} />
               </div>
             ))}
           </div>
+          {trendingProducts.length === 0 && (
+            <div className="flex flex-col items-center">
+              <p className="font-semibold text-gray-700">Không có sản phẩm nào được tìm thấy trong thời gian trên</p>
+              <p className="font-medium text-gray-600 mt-4">Vui lòng chọn ngày khác.</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -110,7 +140,7 @@ function Home() {
         <p className="font-bold text-2xl text-gray-800 text-center my-16">Tất cả sản phẩm</p>
         <div className="flex flex-wrap justify-center gap-6">
           {products.map((product) => (
-            <Product key={product.id} product={product} />
+            <Product key={product.ProductID} product={product} />
           ))}
         </div>
       </div>
