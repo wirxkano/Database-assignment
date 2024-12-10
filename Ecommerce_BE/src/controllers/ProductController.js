@@ -10,7 +10,7 @@ const getAllProducts = async (req, res) => {
       return res.status(400).json({ message: 'Failed to get products' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 }
 
@@ -25,7 +25,7 @@ const retrieveTrendingProducts = async (req, res) => {
       return res.status(400).json({ message: 'Failed to get products' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 }
 
@@ -40,7 +40,7 @@ const getProductDetails = async (req, res) => {
       return res.status(400).json({ message: 'Failed to get product details' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 }
 

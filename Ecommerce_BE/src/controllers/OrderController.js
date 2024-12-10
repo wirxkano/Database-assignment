@@ -9,7 +9,7 @@ const getHistory = async (req, res) => {
       return res.status(400).json({ message: 'Failed to get orders' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -22,7 +22,7 @@ const searchOrder = async (req, res) => {
       return res.status(400).json({ message: 'Failed to get orders' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -35,7 +35,7 @@ const storeOrder = async (req, res) => {
       return res.status(400).json({ message: 'Failed to create order' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
