@@ -11,7 +11,7 @@ const register = async (req, res) => {
       return res.status(400).json({ message: 'Invalid data' });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -19,7 +19,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await UserModel.login(email, password);
-
+    
     if (user) {
       let options = {
         maxAge: 30 * 60 * 1000,

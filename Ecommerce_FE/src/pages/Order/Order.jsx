@@ -68,10 +68,10 @@ const Order = () => {
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-screen flex flex-col bg-gray-100 overflow-auto">
       <ToastContainer />
       <Navbar />
-      <div className="flex flex-col items-center h-full bg-gray-100">
+      <div className="flex flex-col items-center bg-gray-100">
         <div className="font-bold text-2xl m-6 text-gray-800 flex-shrink-0">
           Lịch sử đặt hàng
         </div>

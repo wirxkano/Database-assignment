@@ -6,11 +6,11 @@ function OrderItem({ order }) {
       <div className="flex justify-between items-center border-b pb-3">
         <div className="text-sm text-gray-500">Mã đơn hàng: <span className="font-medium text-gray-800">{order[0].OrderID}</span></div>
         <div
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${order[0].Status === 'COMPLETED'
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${order[0].Status === 'Delivered'
             ? 'bg-green-100 text-green-700'
-            : order[0].Status === 'PENDING'
+            : order[0].Status === 'Processing'
               ? 'bg-yellow-100 text-yellow-700'
-              : order[0].Status === 'CANCELLED'
+              : order[0].Status === 'Canceled'
                 ? 'bg-red-100 text-red-700'
                 : 'bg-blue-100 text-blue-700'}`}
         >

@@ -52,28 +52,30 @@ function UserInfo() {
     ]);
   };
 
-  const handleAddressChange = (e, index) => {
-    const { name, value } = e.target;
-    setUserInfo((prevState) => {
-      const updatedAddresses = prevState.addresses.map((address, idx) =>
-        idx === index ? { ...address, [name]: value } : address
-      );
-      return { ...prevState, addresses: updatedAddresses };
-    });
+  const handleAddressChange = () => {
+    alert('Chỉ có thể thêm hoặc xóa địa chỉ');
+    return;
+    // const { name, value } = e.target;
+    // setUserInfo((prevState) => {
+    //   const updatedAddresses = prevState.addresses.map((address, idx) =>
+    //     idx === index ? { ...address, [name]: value } : address
+    //   );
+    //   return { ...prevState, addresses: updatedAddresses };
+    // });
 
-    setAddressChanges((prevState) => {
-      const existingChange = prevState.find(
-        (change) => change.id === userInfo.addresses[index].id
-      );
+    // setAddressChanges((prevState) => {
+    //   const existingChange = prevState.find(
+    //     (change) => change.id === userInfo.addresses[index].id
+    //   );
 
-      if (existingChange) {
-        return prevState.map((change) =>
-          change.id === userInfo.addresses[index].id
-            ? { ...change, data: { ...change.data, [name]: value } }
-            : change
-        );
-      }
-    });
+    //   if (existingChange) {
+    //     return prevState.map((change) =>
+    //       change.id === userInfo.addresses[index].id
+    //         ? { ...change, data: { ...change.data, [name]: value } }
+    //         : change
+    //     );
+    //   }
+    // });
   };
 
   const handleRemoveAddress = (index) => {
@@ -106,7 +108,7 @@ function UserInfo() {
       sessionStorage.setItem('infoMessage', 'Tài khoản của bạn đã bị xóa.');
       navigate("/login");
     }
-    
+
   };
 
   const formatDate = (date) => {
@@ -325,8 +327,42 @@ function UserInfo() {
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                   Thông tin khách hàng
                 </h1>
-                <p className="text-sm text-gray-500">
-                  Thành viên từ: Tháng 1 năm 2022
+                <p
+                  className={`text-sm font-medium flex items-center space-x-2 
+                  ${userInfo.rank === 'Bronze'
+                      ? 'text-orange-400'
+                      : userInfo.rank === 'Silver'
+                        ? 'text-gray-400'
+                        : userInfo.rank === 'Gold'
+                          ? 'text-yellow-300'
+                          : 'text-blue-400'
+                    }`}
+                >
+                  <span className="inline-block w-4 h-4">
+                    {userInfo.rank === 'Bronze' && (
+                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="#cd7f32" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                    {userInfo.rank === 'Silver' && (
+                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="#c0c0c0" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                    {userInfo.rank === 'Gold' && (
+                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="#ffd700" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                    {userInfo.rank === 'Diamond' && (
+                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="#00c1f5" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                  </span>
+                  <span>
+                    Hạng: {userInfo.rank === 'Bronze' ? 'Đồng' : userInfo.rank === 'Silver' ? 'Bạc' : userInfo.rank === 'Gold' ? 'Vàng' : 'Kim cương'}
+                  </span>
                 </p>
               </div>
               <button

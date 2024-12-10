@@ -18,13 +18,13 @@ function Product({ product }) {
       <div className="p-4 text-center">
         <Link to={`products/${ProductID}`} className="mb-4 font-medium hover:text-gray-600">{Name}</Link>
         <div className="flex items-center justify-center gap-x-2">
-          {DiscountPrice === 'Null' ? (
-            <span className="text-gray-800 text-lg font-medium">{SellingPrice}</span>
+          {DiscountPrice === null ? (
+            <span className="text-gray-800 text-lg font-medium">{SellingPrice.toLocaleString()}</span>
           ) : (
-            <span className="text-primary-500 text-lg font-medium">{DiscountPrice}</span>
+            <span className="text-primary-500 text-lg font-medium">{DiscountPrice.toLocaleString()}</span>
           )}
           <span className="text-gray-500 text-lg font-normal line-through">
-            {DiscountPrice === 'Null' ? '' : SellingPrice}
+            {DiscountPrice === null ? '' : SellingPrice.toLocaleString()}
           </span>
         </div>
       </div>

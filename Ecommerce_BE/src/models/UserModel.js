@@ -9,17 +9,19 @@ const register = async (firstName, lastName, email, password, confirmPassword) =
       .input('FirstName', sql.NVarChar, firstName)
       .input('LastName', sql.NVarChar, lastName)
       .input('Email', sql.NVarChar, email)
-      .input('Password', sql.NVarChar, password)
-      .input('PasswordConfirmation', sql.NVarChar, confirmPassword)
+      .input('Password', sql.VarChar, password)
+      .input('PasswordConfirmation', sql.VarChar, confirmPassword)
       .execute('InsertNewPerson');
-
+    
     if (result.returnValue >= 0) {
       return 1;
     }
 
     return 0;
   } catch (err) {
-    throw new Error(err)
+    // console.log(err);
+    
+    throw new Error(err.message)
   }
 };
 
@@ -28,7 +30,7 @@ const login = async (email, password) => {
   try {
     const result = await pool
       .request()
-      .input('Email', sql.VarChar, email)
+      .input('Email', sql.NVarChar, email)
       .input('Password', sql.VarChar, password)
       .execute('AuthenticateUser');
 
@@ -49,9 +51,10 @@ const getInfo = async (id) => {
       .request()
       .input('PersonID', sql.Int, id)
       .query(`
-        SELECT FirstName, LastName, Gender, DOB, Email, PhoneNumber, Street, Commune, District, City
+        SELECT FirstName, LastName, Gender, DOB, Email, PhoneNumber, Street, Commune, District, City, Rank
         FROM Person P
         LEFT JOIN PersonAddress PA ON P.PersonID = PA.PersonID
+        LEFT JOIN Customer C ON P.PersonID = C.CustomerID
         WHERE P.PersonID = @PersonID
       `);
     if (result.recordset.length > 0) {
@@ -117,8 +120,6 @@ const deleteAccount = async (id) => {
       .request()
       .input('PersonID', sql.Int, id)
       .execute('DeletePerson');
-
-    console.log(result);
 
     if (result.returnValue >= 0) {
       return 1;

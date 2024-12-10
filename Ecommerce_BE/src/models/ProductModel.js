@@ -2,9 +2,26 @@ import { getConnection, sql } from '~/config/connectDB';
 
 const getAllProducts = async () => {
   const pool = getConnection();
-  const result = await pool.request().query('SELECT * FROM Product'); // just for testing
+  try {
+    const result = await pool
+      .request()
+      .query(`
+        SELECT P.ProductID, P.Name, P.SellingPrice, P.DiscountPrice, P.Quantity, MIN(PI.ImgUrl) AS ImgUrl
+        FROM Product P
+        JOIN ProductImage PI ON P.ProductID = PI.ProductID
+        GROUP BY P.ProductID, P.Name, P.SellingPrice, P.DiscountPrice, P.Quantity
+      `);
 
-  return result.recordset;
+    if (result.recordset.length > 0) {
+      return result.recordset;
+    }
+
+    return null;
+  } catch (err) {
+    console.log(err);
+    
+    throw new Error(err)
+  }
 };
 
 const retrieveTrendingProducts = async (startDate, endDate, n) => {

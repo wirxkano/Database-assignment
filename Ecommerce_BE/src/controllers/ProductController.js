@@ -2,10 +2,13 @@ import { ProductModel } from '~/models/ProductModel';
 
 const getAllProducts = async (req, res) => {
   try {
-    // just for testing
     const products = await ProductModel.getAllProducts();
 
-    return res.status(200).json(products);
+    if (products) {
+      return res.status(200).json(products);
+    } else {
+      return res.status(400).json({ message: 'Failed to get products' });
+    }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

@@ -1,15 +1,18 @@
 import Slider from '~/components/Slider';
 import Navbar from '~/components/Navbar';
 import Category from '~/components/Category';
-import { Form, Link, useLoaderData } from 'react-router-dom';
+import { Form, useLoaderData } from 'react-router-dom';
 import Product from '~/pages/Product/Product';
 import Banner from '~/components/Banner';
 import { useEffect, useState } from 'react';
 import { viewTrendingProducts } from '~/apis/postAPIs';
+import Pagination from '~/components/Pagination/Pagination';
 
 function Home() {
   const { categories, trendingProducts, products } = useLoaderData();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 9;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -112,13 +115,22 @@ function Home() {
         </div>
       </div>
 
-      <div className="w-full h-24 flex justify-center items-center pb-6 mb-12">
+      {/* <div className="w-full h-24 flex justify-center items-center pb-6 mb-12">
         <Link
           to="#"
           className="text-white bg-primary-500 hover:bg-black py-2 px-6 rounded-md text-lg font-semibold transition-all duration-300"
         >
           Xem thêm
         </Link>
+      </div> */}
+      <div className="flex justify-center mb-8">
+        <Pagination
+          className="pagination-bar"
+          currentPage={currentPage}
+          totalCount={products.length}
+          pageSize={pageSize}
+          onPageChange={page => setCurrentPage(page)}
+        />
       </div>
 
       <div className="w-full h-auto mb-12">

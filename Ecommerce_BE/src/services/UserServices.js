@@ -9,6 +9,7 @@ export const formatUserData = (rows) => {
     dob: rows[0]?.DOB?.toISOString()?.split('T')[0] || 'N/A',
     phone: rows[0].PhoneNumber || 'N/A',
     email: rows[0].Email,
+    rank: rows[0].Rank || 'N/A', 
     addresses: rows
       .filter(row => row.Street !== null)
       .map(row => ({

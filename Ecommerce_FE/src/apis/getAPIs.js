@@ -1,5 +1,5 @@
 import { axiosInstance } from './axiosInstance';
-import { categoryData, productData, trendingProductData } from '~/data/mockData';
+import { categoryData, trendingProductData } from '~/data/mockData';
 
 export async function userLoader() {
   const user = (await axiosInstance.get('/users/info')).data.user;
@@ -10,7 +10,7 @@ export async function userLoader() {
 export async function homeLoader() {
   const categories = categoryData;
   const trendingProducts = trendingProductData;
-  const products = productData;
+  const products = (await axiosInstance.get('/products/all')).data;
 
   return { categories, trendingProducts, products };
 }

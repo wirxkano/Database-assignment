@@ -87,7 +87,7 @@ export const trendingProductData = [
     Name: 'Chuột Mickey',
     ImgUrl: mouse,
     SellingPrice: '1.000.000.000',
-    DiscountPrice: 'Null',
+    DiscountPrice: null,
     Quantity: 10
   },
   {
