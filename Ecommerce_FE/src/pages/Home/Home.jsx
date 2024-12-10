@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react';
 import { viewTrendingProducts } from '~/apis/postAPIs';
 
 function Home() {
-  const { categories, trendingProducts, products } = useLoaderData();
+  const { categories, products } = useLoaderData();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [trendingProducts, setTrendingProducts] = useState(useLoaderData().trendingProducts || []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -36,6 +38,7 @@ function Home() {
 
     if (response.status === 200) {
       // handle set new trending products
+      setTrendingProducts(response.data);
     }
 
   }
@@ -79,6 +82,7 @@ function Home() {
             min="1"
             max="10"
             name="top-n"
+            value="5"
             className="border border-gray-300 rounded-md px-4 py-2 w-40 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
             placeholder="Số lượng"
           />

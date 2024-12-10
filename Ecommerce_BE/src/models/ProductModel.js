@@ -1,26 +1,41 @@
 import { getConnection, sql } from '~/config/connectDB';
 
+const sqlHelpers = {
+  toDate: (value) => value ? new Date(value) : null,
+  toInt: (value) => value ? parseInt(value) : null
+};
+
 const getAllProducts = async () => {
   const pool = getConnection();
-  const result = await pool.request().query('SELECT * FROM Product'); // just for testing
 
-  return result.recordset;
+  try {
+    const result = await pool.request().query('SELECT * FROM Product'); // just for testing
+
+    return result.recordset;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const retrieveTrendingProducts = async (startDate, endDate, n) => {
   const pool = getConnection();
 
-  const result = await pool
+  try {
+    const result = await pool
     .request()
-    .input('StartDate', sql.Date, startDate)
-    .input('EndDate', sql.Date, endDate)
-    .input('N', sql.Int, n)
+    .input('StartDate', sql.Date, sqlHelpers.toDate(startDate))
+    .input('EndDate', sql.Date, sqlHelpers.toDate(endDate))
+    .input('N', sql.Int, sqlHelpers.toInt(n))
     .execute('retrieveBestSellingProducts');
 
-  if (result.recordset.length >= 0) {
-    return result.recordset;
+  
+    if (result.recordset.length >= 0) {
+      return result.recordset;
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
   }
-  return null;
 };
 
 const getProductDetails = async (id) => {
