@@ -34,7 +34,7 @@ function ProductFound() {
   return (
     <div>
       <Navbar />
-      <div className="px-28 min-h-80">
+      <div className="px-4 md:px-28 min-h-80">
         <div className="text-sm text-gray-500 my-8">Tìm thấy {products.length} kết quả phù hợp.</div>
         <div>
           {getPaginatedProducts().map((product) => (
@@ -54,7 +54,7 @@ function ProductFound() {
               <div className="p-4">
                 <Link
                   to={`/products/${product.ProductID}`}
-                  className="text-xl font-bold text-gray-800 hover:underline hover:text-primary-400 cursor-pointer">
+                  className="text-xl font-bold text-gray-800 hover:underline hover:text-primary-400 cursor-pointer line-clamp-2">
                   {product.ProductName}
                 </Link>
                 <p className="text-lg text-gray-700 mt-4 line-clamp-2">

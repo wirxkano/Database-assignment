@@ -81,7 +81,7 @@ const getProductDetails = async (id) => {
 
 const searchProducts = async (keyword) => {
   const pool = getConnection();
-  
+
   try {
     const result = await pool
       .request()

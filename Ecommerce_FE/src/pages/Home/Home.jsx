@@ -14,13 +14,14 @@ function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [trendingProducts, setTrendingProducts] = useState([]);
-  const pageSize = 12;
+  const [isMobile, setIsMobile] = useState(false);
+  const [pageSize, setPageSize] = useState(12);
 
   const getPaginatedProducts = () => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return products.slice(startIndex, endIndex);
-  };  
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +40,20 @@ function Home() {
       }
     }
     fetchBestSellingProducts();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setPageSize(window.innerWidth <= 768 ? 6 : 12);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -67,16 +82,36 @@ function Home() {
       <div className="w-full h-auto bg-gray-100 py-12">
         <p className="font-bold text-2xl text-gray-800 text-center mb-12">Danh mục</p>
         <div className="flex items-center justify-center gap-4">
-          {categories.map((category) => (
-            <Category key={category.id} category={category} />
-          ))}
+          <div className="hidden sm:flex gap-4">
+            {categories.map((category) => (
+              <Category key={category.id} category={category} />
+            ))}
+          </div>
+
+          {/* Display category for mobile screens */}
+          <div className="flex sm:hidden">
+            <Category category={categories[0]} />
+          </div>
+          {/* <div className="overflow-hidden">
+            <div
+              className="flex transition-transform duration-1000 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * (isMobile ? 100 : 25)}%)` }}
+            >
+              {categories.concat(categories.slice(0, 4)).map((category, index) => (
+                <div key={index} className="w-full md:w-1/4 md:flex-shrink-0">
+                  <Category category={category} />
+                </div>
+              ))}
+            </div>
+          </div> */}
+          
         </div>
       </div>
 
       <div className="w-full h-auto mb-12 px-16">
         <p className="font-bold text-2xl text-gray-800 text-center mt-16 mb-8">Sản phẩm bán chạy</p>
-        <Form className="w-full flex items-center justify-center gap-4 mb-12" onSubmit={handleSubmit}>
-          <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">
+        <Form className="w-full flex flex-col md:flex-row items-center justify-center gap-4 mb-12" onSubmit={handleSubmit}>
+          <label className="hidden md:block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">
             Từ ngày
           </label>
           <input
@@ -85,7 +120,7 @@ function Home() {
             id="start-date"
             className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
           />
-          <label className="text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">
+          <label className="hidden md:block text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">
             Đến ngày
           </label>
           <input
@@ -112,7 +147,7 @@ function Home() {
 
         <div className="flex justify-center">
           {trendingProducts.length <= 4 && trendingProducts.map((product, index) => (
-            <div key={index} className="w-1/4">
+            <div key={index} className="w-full md:w-1/4">
               <Product product={product} />
               <div className="text-center text-gray-600 font-medium">Số lượng đã bán: {product.TotalSold}</div>
             </div>
@@ -122,10 +157,10 @@ function Home() {
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-1000 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * 25}%)` }}
+            style={{ transform: `translateX(-${currentIndex * (isMobile ? 100 : 25)}%)` }}
           >
             {trendingProducts.length > 4 && trendingProducts.concat(trendingProducts.slice(0, 4)).map((product, index) => (
-              <div key={index} className="w-1/4 flex-shrink-0">
+              <div key={index} className="w-full md:w-1/4 md:flex-shrink-0">
                 <Product product={product} />
                 <div className="text-center text-gray-600 font-medium">Số lượng đã bán: {product.TotalSold}</div>
               </div>
@@ -140,7 +175,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="w-full h-auto mb-12">
+      <div id="all-products" className="w-full h-auto mb-12">
         <p className="font-bold text-2xl text-gray-800 text-center my-16">Tất cả sản phẩm</p>
         <div className="flex flex-wrap justify-center gap-6">
           {getPaginatedProducts().map((product) => (
@@ -171,7 +206,7 @@ function Home() {
         <Banner />
       </div>
 
-      <div>
+      <div id="contact">
         <Footer />
       </div>
     </div>

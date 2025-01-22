@@ -26,16 +26,12 @@ const getSearchProductHistory = async (id) => {
 
 const storeSearchProductHistory = async (id, data) => {
   const pool = getConnection();
-  // should write function in sql server
   try {
     const result = await pool
       .request()
       .input('CustomerID', sql.Int, id)
-      .input('SearchKeywords', sql.NVarChar, `${data.keyword}`)
-      .query(`
-        INSERT INTO CustomerSearchKeywords
-        VALUES (@CustomerID, @SearchKeywords)
-      `);
+      .input('Keyword', sql.NVarChar, `${data.keyword}`)
+      .execute('AddKeywordIfNotExists');
         
     if (result.rowsAffected.length >= 0) {
       return true;

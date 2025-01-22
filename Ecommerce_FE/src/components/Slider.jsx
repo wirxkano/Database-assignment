@@ -9,17 +9,17 @@ function Slider() {
     { 
       src: slider1, 
       text: [
-        { content: "Giảm 35%", style: "text-gray-500 text-xl font-normal" },
-        { content: "Sản phẩm bán chạy nhất", style: "text-black text-4xl font-bold" },
-        { content: "Mua ngay", style: "text-primary-500 text-2xl font-semibold" },
+        { content: "Giảm 35%", style: "text-gray-500 md:text-xl font-normal" },
+        { content: "Sản phẩm bán chạy nhất", style: "text-black md:text-4xl font-bold" },
+        { content: "Mua ngay", style: "text-primary-500 md:text-2xl font-semibold" },
       ] 
     },
     { 
       src: slider2, 
       text: [
-        { content: "Khuyến mãi sốc", style: "text-gray-500 text-xl font-normal" },
-        { content: "Hàng mới về", style: "text-black text-4xl font-bold" },
-        { content: "Đặt hàng ngay", style: "text-primary-500 text-2xl font-semibold" },
+        { content: "Khuyến mãi sốc", style: "text-gray-500 md:text-xl font-normal" },
+        { content: "Hàng mới về", style: "text-black md:text-4xl font-bold" },
+        { content: "Đặt hàng ngay", style: "text-primary-500 md:text-2xl font-semibold" },
       ] 
     }
   ];
@@ -46,7 +46,7 @@ function Slider() {
                 alt={`Slide ${index + 1}`}
                 className="w-full h-auto"
               />
-              <div className="absolute top-1/3 left-28 space-y-4">
+              <div className="absolute md:top-1/3 md:left-28 top-4 left-4 md:space-y-4 space-y-2">
                 {image.text.map((line, lineIndex) => (
                   <p key={lineIndex} className={line.style}>
                     {line.content}

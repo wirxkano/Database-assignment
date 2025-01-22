@@ -47,7 +47,7 @@ function SearchBar({ closeSearch, navbarRef }) {
   return (
     <div>
       <div
-        className="w-full mx-auto z-50 bg-white py-8 px-28 absolute shadow-lg"
+        className="w-full mx-auto z-20 bg-white py-8 md:px-28 px-4 absolute shadow-lg"
         ref={searchBarRef}
       >
         <div className="flex items-center gap-2">
