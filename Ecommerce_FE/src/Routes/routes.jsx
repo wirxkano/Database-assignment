@@ -9,6 +9,7 @@ import UserInfo from '~/pages/UserInfo/UserInfo'
 import Order from '~/pages/Order/Order'
 import ProductDetail from '~/pages/Product/ProductDetail'
 import Payment from '~/pages/Payment/Payment'
+import CartDetail from '~/pages/CartDetail/cartDetail'
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +49,11 @@ export const router = createBrowserRouter([
   {
     path: '/payment',
     element: <Payment />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: '/cart/:id',
+    element: <CartDetail />,
     errorElement: <ErrorPage />
   }
 ])
