@@ -45,6 +45,12 @@ export async function logoutAction() {
   return response;
 }
 
+export async function storeSearchProductHistory(data) {
+  const response = await axiosInstance.post('/users/search-history', { keyword: data });
+  
+  return response;
+}
+
 export async function retrieveTrendingProducts(data) {
   const response = await axiosInstance.post('/products/trending', data);
   

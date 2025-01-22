@@ -11,7 +11,7 @@ const getAllProducts = async () => {
     const result = await pool
       .request()
       .query(`
-        SELECT P.ProductID, P.Name, P.SellingPrice, P.DiscountPrice, P.Quantity, MIN(PI.ImgUrl) AS ImgUrl
+        SELECT P.ProductID, P.Name AS ProductName, P.SellingPrice, P.DiscountPrice, P.Quantity, MIN(PI.ImgUrl) AS ImgUrl
         FROM Product P
         JOIN ProductImage PI ON P.ProductID = PI.ProductID
         GROUP BY P.ProductID, P.Name, P.SellingPrice, P.DiscountPrice, P.Quantity
@@ -60,12 +60,12 @@ const getProductDetails = async (id) => {
       .request()
       .input('ProductID', sql.Int, id)
       .query(`
-      SELECT Name, Description, SellingPrice, DiscountPrice, Quantity, AverageRate, ImgUrl, BrandName, Country, CategoryName
-      FROM Product P
-      JOIN ProductImage PI ON P.ProductID = PI.ProductID
-      JOIN Brand B ON P.BrandID = B.BrandID
-      JOIN Category C ON P.CategoryID = C.CategoryID
-      WHERE P.ProductID = @ProductID 
+        SELECT Name, Description, SellingPrice, DiscountPrice, Quantity, AverageRate, ImgUrl, BrandName, Country, CategoryName
+        FROM Product P
+        JOIN ProductImage PI ON P.ProductID = PI.ProductID
+        JOIN Brand B ON P.BrandID = B.BrandID
+        JOIN Category C ON P.CategoryID = C.CategoryID
+        WHERE P.ProductID = @ProductID 
     `);
 
     if (result.recordset.length >= 0) {
@@ -79,8 +79,35 @@ const getProductDetails = async (id) => {
   }
 };
 
+const searchProducts = async (keyword) => {
+  const pool = getConnection();
+  
+  try {
+    const result = await pool
+      .request()
+      .input('Keyword', sql.NVarChar, `%${keyword}%`)
+      .query(`
+        SELECT P.ProductID, P.Name AS ProductName, P.Description, MIN(PI.ImgUrl) AS ImgUrl
+        FROM Product P
+        JOIN ProductImage PI ON P.ProductID = PI.ProductID
+        WHERE LOWER(P.Name) LIKE LOWER(@Keyword) OR LOWER(P.Description) LIKE LOWER(@Keyword)
+        GROUP BY P.ProductID, P.Name, P.Description
+      `);
+
+    if (result.recordset.length >= 0) {
+      return result.recordset || {};
+    }
+    return null;
+  } catch (err) {
+    console.log(err);
+
+    throw new Error(err)
+  }
+};
+
 export const ProductModel = {
   getAllProducts,
   retrieveTrendingProducts,
-  getProductDetails
+  getProductDetails,
+  searchProducts
 };

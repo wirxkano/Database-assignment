@@ -7,13 +7,20 @@ import Banner from '~/components/Banner';
 import { useEffect, useState } from 'react';
 import { retrieveTrendingProducts } from '~/apis/postAPIs';
 import Pagination from '~/components/Pagination/Pagination';
+import Footer from '~/components/Footer';
 
 function Home() {
   const { categories, products } = useLoaderData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [trendingProducts, setTrendingProducts] = useState([]);
-  const pageSize = 9;
+  const pageSize = 12;
+
+  const getPaginatedProducts = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return products.slice(startIndex, endIndex);
+  };  
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,14 +32,14 @@ function Home() {
 
   useEffect(() => {
     const fetchBestSellingProducts = async () => {
-      const response = await retrieveTrendingProducts({ startDate: '2024-04-10', endDate: '2024-10-20', n: '5' });
+      const response = await retrieveTrendingProducts({ startDate: null, endDate: null, n: '5' });
 
       if (response.status === 200) {
         setTrendingProducts(response.data);
       }
     }
     fetchBestSellingProducts();
-  }, [])
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,10 +54,7 @@ function Home() {
 
     const response = await retrieveTrendingProducts(data);
 
-    console.log(response);
-
     if (response.status === 200) {
-      // handle set new trending products
       setTrendingProducts(response.data);
     }
 
@@ -95,7 +99,6 @@ function Home() {
             min="1"
             max="10"
             name="top-n"
-            value="5"
             className="border border-gray-300 rounded-md px-4 py-2 w-40 focus:outline-none focus:ring-1 focus:ring-primary-300 focus:border-primary-300"
             placeholder="Số lượng"
           />
@@ -124,6 +127,7 @@ function Home() {
             {trendingProducts.length > 4 && trendingProducts.concat(trendingProducts.slice(0, 4)).map((product, index) => (
               <div key={index} className="w-1/4 flex-shrink-0">
                 <Product product={product} />
+                <div className="text-center text-gray-600 font-medium">Số lượng đã bán: {product.TotalSold}</div>
               </div>
             ))}
           </div>
@@ -139,7 +143,7 @@ function Home() {
       <div className="w-full h-auto mb-12">
         <p className="font-bold text-2xl text-gray-800 text-center my-16">Tất cả sản phẩm</p>
         <div className="flex flex-wrap justify-center gap-6">
-          {products.map((product) => (
+          {getPaginatedProducts().map((product) => (
             <Product key={product.ProductID} product={product} />
           ))}
         </div>
@@ -165,6 +169,10 @@ function Home() {
 
       <div className="w-full h-auto mb-12">
         <Banner />
+      </div>
+
+      <div>
+        <Footer />
       </div>
     </div>
   );

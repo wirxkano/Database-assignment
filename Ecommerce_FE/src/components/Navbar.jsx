@@ -1,12 +1,15 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import arya from "~/assets/Arya-Logo-Lg.png";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logoutAction } from '~/apis/postAPIs';
+import SearchBar from '~/components/SearchBar';
 
 function Navbar() {
   const [userPopup, setUserPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
+  const navbarRef = useRef();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +28,7 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
+      <nav className="bg-white border-gray-200 dark:bg-gray-900" ref={navbarRef}>
         <div className="max-w-[calc(100vw-190px)] flex flex-wrap items-center justify-between mx-auto p-4">
           <Link
             to="/"
@@ -46,7 +49,7 @@ function Navbar() {
                   <Link
                     to={item.path}
                     className={`block py-2 px-3 rounded ${location.pathname === item.path
-                      ? "text-red-500"
+                      ? "text-primary-500"
                       : "text-gray-900"
                       } hover:bg-gray-100 hover:text-primary-500 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white md:dark:hover:text-primary-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent`}
                     aria-current={
@@ -61,6 +64,14 @@ function Navbar() {
           </div>
 
           <div className="flex items-center gap-8">
+            <div
+              className="cursor-pointer"
+              onClick={() => setIsSearch(!isSearch)}
+            >
+              <svg className="w-6 h-6 text-gray-800 dark:text-white hover:text-primary-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+              </svg>
+            </div>
             <Link to="#" className="flex items-center hover:text-primary-500">
               <Icon icon="mdi:cart-outline" width="24" height="24" />
               Giỏ hàng
@@ -97,7 +108,9 @@ function Navbar() {
           </div>
         </div>
       </nav>
-      <hr />
+      {isSearch ? (
+        <SearchBar closeSearch={() => setIsSearch(false)} navbarRef={navbarRef} />
+      ) : <hr />}
     </div>
   );
 }

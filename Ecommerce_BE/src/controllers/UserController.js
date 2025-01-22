@@ -1,3 +1,4 @@
+import { SearchModel } from '~/models/SearchModel';
 import { UserModel } from '~/models/UserModel';
 import { generateAccessJWT } from '~/services/AuthServices';
 
@@ -92,11 +93,41 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const getSearchProductHistory = async (req, res) => {
+  try {
+    const result = await SearchModel.getSearchProductHistory(req.userId);
+
+    if (result) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json({ message: 'Failed to get search histories' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const storeSearchProductHistory = async (req, res) => {
+  try {
+    const result = await SearchModel.storeSearchProductHistory(req.userId, req.body);
+
+    if (result) {
+      return res.status(200).json({ message: 'Save data successfully' });
+    } else {
+      return res.status(400).json({ message: 'Failed to save search histories' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const UserController = {
   register,
   login,
   logout,
   getInfo,
   updateInfo,
-  deleteAccount
+  deleteAccount,
+  getSearchProductHistory,
+  storeSearchProductHistory
 };

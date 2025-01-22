@@ -19,14 +19,26 @@ function Payment() {
   const productId = searchParams.get('productId');
 
   useEffect(() => {
-    const fecthUser = async () => {
-      const { user } = await userLoader();
+    if (!(sessionStorage.getItem("isLoggedIn") === "true")) {
+      navigate("/login");
+    }
 
-      setUserData(user);
+  }, [navigate]);
+
+  useEffect(() => {
+    const fecthUser = async () => {
+      try {
+        const { user } = await userLoader();
+        setUserData(user);
+      } catch (error) {
+        if (error.response.status === 401) {
+          navigate('/login');
+        }
+      }
     }
 
     fecthUser();
-  }, []);
+  }, [navigate]);
 
   const handleIncrease = () => {
     if (numberPurchase < product.Quantity) {
@@ -57,8 +69,6 @@ function Payment() {
     }
 
     const response = await makeOrder(data);
-
-    console.log(response);
 
     if (response.status === 200) {
       sessionStorage.setItem('successMessage', 'Đặt hàng thành công, vui lòng theo dõi trạng thái đơn hàng của bạn.');
@@ -110,7 +120,7 @@ function Payment() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-gray-700 dark:text-gray-200">{userData.fullName}</span>
+            <span className="text-gray-700 dark:text-gray-200">{userData?.fullName}</span>
           </div>
           <div className="flex items-center gap-3 mb-3">
             <svg
@@ -124,7 +134,7 @@ function Payment() {
             >
               <path d="M7.978 4a2.553 2.553 0 0 0-1.926.877C4.233 6.7 3.699 8.751 4.153 10.814c.44 1.995 1.778 3.893 3.456 5.572 1.68 1.679 3.577 3.018 5.57 3.459 2.062.456 4.115-.073 5.94-1.885a2.556 2.556 0 0 0 .001-3.861l-1.21-1.21a2.689 2.689 0 0 0-3.802 0l-.617.618a.806.806 0 0 1-1.14 0l-1.854-1.855a.807.807 0 0 1 0-1.14l.618-.62a2.692 2.692 0 0 0 0-3.803l-1.21-1.211A2.555 2.555 0 0 0 7.978 4Z" />
             </svg>
-            <span className="text-gray-700 dark:text-gray-200">{userData.phone}</span>
+            <span className="text-gray-700 dark:text-gray-200">{userData?.phone}</span>
           </div>
           <div className="flex items-center gap-3">
             <svg
@@ -143,7 +153,10 @@ function Payment() {
               />
             </svg>
             <span className="text-gray-700 dark:text-gray-200">
-              {`${userData?.addresses[addressIndex].street}, ${userData?.addresses[addressIndex].commune}, ${userData?.addresses[addressIndex].district}, ${userData?.addresses[addressIndex].city}`}
+              {userData?.address?.length >= 0
+                ? `${userData?.addresses[addressIndex]?.street}, ${userData?.addresses[addressIndex]?.commune}, ${userData?.addresses[addressIndex]?.district}, ${userData?.addresses[addressIndex]?.city}`
+                : 'Chưa nhập địa chỉ'
+              }
             </span>
             <button
               className="text-primary-500"
