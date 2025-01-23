@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 
 function Product({ product }) {
-  const { ProductID, Name, SellingPrice, DiscountPrice, ImgUrl } = product;
+  const { ProductID, ProductName, SellingPrice, DiscountPrice, ImgUrl } = product;
 
   return (
     <div>
@@ -23,7 +23,7 @@ function Product({ product }) {
           to={`products/${ProductID}`}
           className="mb-4 font-medium hover:text-gray-600"
         >
-          {Name}
+          {ProductName}
         </Link>
         <div className="flex items-center justify-center gap-x-2">
           {DiscountPrice === null ? (

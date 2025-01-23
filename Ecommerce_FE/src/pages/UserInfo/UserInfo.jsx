@@ -52,30 +52,28 @@ function UserInfo() {
     ]);
   };
 
-  const handleAddressChange = () => {
-    alert('Chỉ có thể thêm hoặc xóa địa chỉ');
-    return;
-    // const { name, value } = e.target;
-    // setUserInfo((prevState) => {
-    //   const updatedAddresses = prevState.addresses.map((address, idx) =>
-    //     idx === index ? { ...address, [name]: value } : address
-    //   );
-    //   return { ...prevState, addresses: updatedAddresses };
-    // });
+  const handleAddressChange = (e, index) => {
+    const { name, value } = e.target;
+    setUserInfo((prevState) => {
+      const updatedAddresses = prevState.addresses.map((address, idx) =>
+        idx === index ? { ...address, [name]: value } : address
+      );
+      return { ...prevState, addresses: updatedAddresses };
+    });
 
-    // setAddressChanges((prevState) => {
-    //   const existingChange = prevState.find(
-    //     (change) => change.id === userInfo.addresses[index].id
-    //   );
+    setAddressChanges((prevState) => {
+      const existingChange = prevState.find(
+        (change) => change.id === userInfo.addresses[index].id
+      );
 
-    //   if (existingChange) {
-    //     return prevState.map((change) =>
-    //       change.id === userInfo.addresses[index].id
-    //         ? { ...change, data: { ...change.data, [name]: value } }
-    //         : change
-    //     );
-    //   }
-    // });
+      if (existingChange) {
+        return prevState.map((change) =>
+          change.id === userInfo.addresses[index].id
+            ? { ...change, data: { ...change.data, [name]: value } }
+            : change
+        );
+      }
+    });
   };
 
   const handleRemoveAddress = (index) => {

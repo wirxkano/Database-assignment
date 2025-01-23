@@ -13,4 +13,7 @@ router.put('/update-info', authentication, UserController.updateInfo);
 
 router.delete('/delete', authentication, UserController.deleteAccount);
 
+router.get('/search-history', authentication, UserController.getSearchProductHistory);
+router.post('/search-history', authentication, UserController.storeSearchProductHistory);
+
 export const UserRoutes = router;

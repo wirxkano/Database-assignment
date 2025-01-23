@@ -2,9 +2,16 @@ import { axiosInstance } from './axiosInstance';
 import { categoryData } from '~/data/mockData';
 
 export async function userLoader() {
-  const user = (await axiosInstance.get("/users/info")).data.user;
+  const response = await axiosInstance.get("/users/info");
+  const user = response.data.user;
 
-  return { user };
+  return { user, response };
+}
+
+export async function getSearchProductHistory() {
+  const response = await axiosInstance.get(`users/search-history`);
+
+  return response;
 }
 
 export async function homeLoader() {
@@ -21,8 +28,7 @@ export async function productDetailsLoader(id) {
 }
 
 export async function orderLoader() {
-  const orders = (await axiosInstance.get("/orders/history?status=All")).data
-    .orders;
+  const orders = (await axiosInstance.get("/orders/history?status=All")).data.orders;
 
   return { orders };
 }
@@ -35,6 +41,12 @@ export async function getOrdersByStatus(status) {
 
 export async function getOrdersById(id) {
   const response = await axiosInstance.get(`orders/search?q=${id}`);
+
+  return response;
+}
+
+export async function getProductsByKeyword(keyword) {
+  const response = await axiosInstance.get(`products/search?q=${keyword}`);
 
   return response;
 }

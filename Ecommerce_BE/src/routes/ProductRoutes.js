@@ -4,6 +4,7 @@ import { ProductController } from "~/controllers/ProductController";
 const router = express.Router();
 
 router.get('/all', ProductController.getAllProducts);
+router.get('/search', ProductController.searchProducts);
 router.get('/:id', ProductController.getProductDetails);
 router.post('/trending', ProductController.retrieveTrendingProducts);
 

@@ -7,7 +7,7 @@ function Category({ category }) {
   const { name, quantity, img } = category;
 
   return (
-    <Link to="#" className="w-[320px] h-[260px] bg-white rounded-lg overflow-hidden relative flex flex-col hover:bg-gray-50 hover:shadow-md hover:w-[330px] hover:h-[270px] transition-all duration-300 ease-in-out">
+    <Link to="#" className="w-[320px] h-[260px] bg-white rounded-lg overflow-hidden relative flex flex-col hover:shadow-md hover:w-[330px] hover:h-[270px] transition-all duration-300 ease-in-out">
       <div className="flex flex-col pl-8 pt-8 justify-between items-start w-full">
         <div className="flex justify-between items-center w-full pr-4">
           <div>

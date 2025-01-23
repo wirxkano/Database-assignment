@@ -26,8 +26,7 @@ function ProductDetail() {
             <img
               src={product.ImgUrl}
               alt={product.Name}
-              className="w-full h-64 object-cover rounded-lg border"
-              style={{ width: '450px', height: '436px', objectFit: 'cover' }}
+              className="w-full h-auto object-cover rounded-lg border"
             />
           </div>
 

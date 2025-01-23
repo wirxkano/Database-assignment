@@ -3,7 +3,6 @@ import { Form } from 'react-router-dom';
 function SearchInput() {
   return (
     <div>
-
       <Form className="flex items-center max-w-sm mx-auto">
         <label htmlFor="simple-search" className="sr-only">Search</label>
         <div className="relative w-full">

@@ -293,3 +293,12 @@ export const productDetailData = {
   CategoryName: 'Laptop'
 };
 
+export const searchHistoryData = [
+  "Điện thoại xiaomi",
+  "Tai nghe bluetooth",
+  "Tai nghe Sony",
+  "Máy tính bảng",
+  "Chuột không dây",
+  "PS5"
+];
+
