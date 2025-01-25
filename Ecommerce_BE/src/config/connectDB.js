@@ -1,5 +1,5 @@
-import sql from 'mssql'
-import { env } from '~/config/env'
+import sql from "mssql";
+import { env } from "./env";
 
 const sqlConfig = {
   user: env.DB_USERNAME,
@@ -9,29 +9,29 @@ const sqlConfig = {
   options: {
     encrypt: false,
     trustServerCertificate: true,
-    enableArithAbort: true
-  }
-}
+    enableArithAbort: true,
+  },
+};
 
-let pool
+let pool;
 
 export const connectToDB = async () => {
   try {
     if (!pool) {
-      pool = await sql.connect(sqlConfig)
+      pool = await sql.connect(sqlConfig);
     }
-    return pool
+    return pool;
   } catch (err) {
-    console.error('Database connection failed.', err)
-    throw err
+    console.error("Database connection failed.", err);
+    throw err;
   }
-}
+};
 
 export const getConnection = () => {
   if (!pool) {
-    throw new Error('Database connection has not been established.')
+    throw new Error("Database connection has not been established.");
   }
-  return pool
-}
+  return pool;
+};
 
 export { sql };

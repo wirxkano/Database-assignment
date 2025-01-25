@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { env } from '~/config/env';
+import jwt from "jsonwebtoken";
+import { env } from "../config/env";
 
 export const authentication = async (req, res, next) => {
   try {
@@ -13,7 +13,7 @@ export const authentication = async (req, res, next) => {
       if (err) {
         return res
           .status(401)
-          .json({ message: 'This session has expired. Please login' });
+          .json({ message: "This session has expired. Please login" });
       }
 
       const { id } = decoded;
@@ -25,7 +25,7 @@ export const authentication = async (req, res, next) => {
   } catch (err) {
     res.status(500).json({
       data: [],
-      message: err
+      message: err,
     });
   }
 };
