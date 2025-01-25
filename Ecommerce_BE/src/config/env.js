@@ -14,5 +14,3 @@ export const env = {
   BUILD_MODE: process.env.BUILD_MODE,
   SECRET_ACCESS_TOKEN: process.env.SECRET_ACCESS_TOKEN
 };
-
-console.log("env calling: ", env);

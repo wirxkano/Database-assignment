@@ -77,27 +77,6 @@ const getProductDetails = async (id) => {
 
     throw new Error(err)
   }
-
-  const result = await pool.request().query("SELECT * FROM Products"); // just for testing
-  console.log(result.recordset);
-  return result.recordset;
-};
-
-const retrieveTrendingProducts = async (startDate, endDate, n) => {
-  const pool = await getConnection();
-
-  const result = await pool
-    .request()
-    .input("StartDate", sql.Date, startDate)
-    .input("EndDate", sql.Date, endDate)
-    .input("N", sql.Int, n)
-    .execute("retrieveBestSellingProducts");
-
-  if (result.recordset.length >= 0) {
-    console.log(result.recordset);
-    return result.recordset;
-  }
-  return [];
 };
 
 const searchProducts = async (keyword) => {
