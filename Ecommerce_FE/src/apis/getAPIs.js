@@ -52,7 +52,12 @@ export async function getProductsByKeyword(keyword) {
   return response;
 }
 
-export async function getCartDetail(id) {
-  const response = await axiosInstance.get(`/cart/${id}`);
-  return response.data;
+export async function getCartDetail() {
+  try {
+    const response = await axiosInstance.get(`/carts`);
+  
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 }

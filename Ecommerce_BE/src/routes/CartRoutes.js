@@ -4,6 +4,6 @@ import { authentication } from "~/middlewares/verify";
 
 const router = express.Router();
 
-router.get('/cart', authentication, CartController.getCartDetails);
+router.get('/', authentication, CartController.getCartDetails);
 
 export const CartRoutes = router;

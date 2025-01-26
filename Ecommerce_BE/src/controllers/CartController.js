@@ -2,10 +2,10 @@ import { CartModel } from "~/models/CartModel";
 
 const getCartDetails = async (req, res) => {
   try {
-    const { id } = req.params;
-    const cart = await CartModel.getCartDetails(id);
-    if (cart) {
-      return res.status(200).json({message: 'Shopping cart is retrieved successfully', cart: cart});
+    const id = req.userId;
+    const cartItems = await CartModel.getCartDetails(id);
+    if (cartItems) {
+      return res.status(200).json(cartItems);
     } else {
       return res.status(400).json({ message: "Failed to get cart details" });
     }

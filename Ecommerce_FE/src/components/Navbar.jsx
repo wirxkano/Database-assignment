@@ -82,9 +82,8 @@ function Navbar() {
                 <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
               </svg>
             </div>
-            <Link to="#" className="flex items-center hover:text-primary-500">
+            <Link to="/cart" className="flex items-center hover:text-primary-500">
               <Icon icon="mdi:cart-outline" width="24" height="24" />
-              Giỏ hàng
             </Link>
             {isLoggedIn ? (
               <div className="relative hover:text-primary-500">
