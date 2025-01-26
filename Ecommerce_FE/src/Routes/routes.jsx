@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />
   },
   {
-    path: '/cart',
+    path: '/cart/:id',
     element: <Cart />,
     errorElement: <ErrorPage />
   }
