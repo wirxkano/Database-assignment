@@ -302,3 +302,69 @@ export const searchHistoryData = [
   "PS5"
 ];
 
+export const cartItemData = [
+  {
+    id: 1,
+    name: 'Throwback Hip Bag',
+    href: '#',
+    color: 'Salmon',
+    price: '$90.00',
+    quantity: 1,
+    imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+    imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+  },
+  {
+    id: 2,
+    name: 'Medium Stuff Satchel',
+    href: '#',
+    color: 'Blue',
+    price: '$32.00',
+    quantity: 1,
+    imageSrc: 'https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
+    imageAlt:
+      'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
+  }
+];
+
+export const couponData = [
+  { 
+    CouponID: 1,
+    Title: "ARYAHEHE",
+    Description: "Giảm 30k cho đơn từ 100k",
+    DiscountPercent: 5,
+    Quantity: 10
+  },
+  {
+    CouponID: 2,
+    Title: "FREESHIP",
+    Description: "Miễn phí vận chuyển",
+    DiscountPercent: 0,
+    Quantity: 10
+  },
+  { CouponID: 3, Title: "SALE50", Description: "Giảm 50k cho đơn từ 500k", DiscountPercent: 2, Quantity: 10 },
+  { CouponID: 4, Title: "SUMMER10", Description: "Giảm 10% cho đơn hàng mùa hè", DiscountPercent: 3, Quantity: 10 },
+  { CouponID: 5, Title: "WELCOME100", Description: "Giảm 100k cho khách hàng mới", DiscountPercent: 2, Quantity: 10 },
+  {
+    CouponID: 6,
+    Title: "SHOCK: NO DISCOUNT",
+    Description: "Mua nhiều, nhưng giảm chẳng bao nhiêu",
+    DiscountPercent: 0,
+    Quantity: 10
+  },
+  { CouponID: 7, Title: "FLASHSALE", Description: "Giảm 30% trong 24 giờ tới", DiscountPercent: 3, Quantity: 10 },
+  {
+    CouponID: 8,
+    Title: "YOU KNOW IT",
+    Description: "Giảm 30k cho đơn hàng",
+    DiscountPercent: 4,
+    Quantity: 10
+  },
+  {
+    CouponID: 9,
+    Title: "NO SALE NO LIFE",
+    Description: "Giảm 2%",
+    DiscountPercent: 2,
+    Quantity: 10
+  }
+];
+

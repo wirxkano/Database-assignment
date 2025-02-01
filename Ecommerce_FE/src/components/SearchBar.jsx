@@ -12,8 +12,10 @@ function SearchBar({ closeSearch, navbarRef }) {
 
   useEffect(() => {
     const fetchSearchData = async () => {
-      const response = await getSearchProductHistory();
-      setSearchHistory(response.data);
+      if ((sessionStorage.getItem("isLoggedIn") === "true")) {
+        const response = await getSearchProductHistory();
+        setSearchHistory(response.data);
+      }
     }
 
     fetchSearchData();

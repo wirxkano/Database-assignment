@@ -4,12 +4,16 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { logoutAction } from '~/apis/postAPIs';
 import SearchBar from '~/components/SearchBar';
+import CartPreview from '~/pages/CartDetail/CartPreview';
+import { getCartItems } from '~/apis/getAPIs';
 
 function Navbar() {
   const [userPopup, setUserPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [numberItems, setNumberItems] = useState(0);
   const navbarRef = useRef();
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,6 +30,18 @@ function Navbar() {
       }
     }
   }, [location.hash]);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const response = await getCartItems();
+      if (response.status === 200) {
+        setCartItems(response.data);
+        setNumberItems(response.data.length);
+      }
+    }
+
+    fetchCartItems();
+  }, []);
 
   const handleLogout = async () => {
     const response = await logoutAction();
@@ -78,14 +94,33 @@ function Navbar() {
               className="cursor-pointer"
               onClick={() => setIsSearch(!isSearch)}
             >
-              <svg className="w-6 h-6 text-gray-800 dark:text-white hover:text-primary-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <svg className="w-7 h-7 text-gray-800 dark:text-white hover:text-primary-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
               </svg>
             </div>
-            <Link to="#" className="flex items-center hover:text-primary-500">
-              <Icon icon="mdi:cart-outline" width="24" height="24" />
-              Giỏ hàng
-            </Link>
+
+            <div className="relative group">
+              <Link to="/cart" className="hover:text-primary-500 relative">
+                {isLoggedIn && numberItems > 0 && (
+                  <div
+                    className="rounded-full bg-primary-400 flex justify-center items-center p-[10px] absolute -top-[0.7rem] -right-[0.3rem] border-white border-2">
+                    <div className="absolute text-[12px] text-white font-normal">
+                      {numberItems >= 5 ? numberItems + "+" : numberItems}
+                    </div>
+                  </div>
+                )}
+                <svg className="me-2 h-7 w-7 shrink-0 text-gray-900 dark:text-white hover:text-primary-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 10V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v4m3-2 .917 11.923A1 1 0 0 1 17.92 21H6.08a1 1 0 0 1-.997-1.077L6 8h12Z"></path>
+                </svg>
+              </Link>
+              <div className="bg-red-500 opacity-0 px-3 py-1 absolute top-5 right-1"></div>
+              {isLoggedIn && (
+                <div className="absolute top-7 right-0 z-10 w-96 hidden group-hover:block">
+                  <CartPreview cartItems={cartItems} />
+                </div>
+              )}
+            </div>
+
             {isLoggedIn ? (
               <div className="relative hover:text-primary-500">
                 <button onClick={() => setUserPopup(!userPopup)}>
@@ -154,7 +189,7 @@ function Navbar() {
               <ul className="flex flex-col gap-4 p-4">
                 {[{ path: "/", label: "Trang chủ" },
                 { path: "/orders", label: "Đơn hàng của tôi" },
-                { path: "#", label: "Giỏ hàng" }
+                { path: "/cart", label: "Giỏ hàng" }
                 ].map((item) => (
                   <li key={item.path}>
                     <Link

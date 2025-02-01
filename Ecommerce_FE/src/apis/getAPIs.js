@@ -50,3 +50,15 @@ export async function getProductsByKeyword(keyword) {
 
   return response;
 }
+
+export async function getCartItems() {
+  const cartItems = await axiosInstance.get('carts');
+  
+  return cartItems;
+}
+
+export async function getCoupons() {
+  const coupons = await axiosInstance.get('coupons');
+  
+  return coupons;
+}

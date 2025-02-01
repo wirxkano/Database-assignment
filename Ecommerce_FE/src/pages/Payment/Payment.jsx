@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { userLoader } from '~/apis/getAPIs';
 import Navbar from '~/components/Navbar';
-import PaymentSumary from './PaymentSumary';
+import PaymentSumary from '~/pages/Payment/PaymentSumary';
 import { makeOrder } from '~/apis/postAPIs';
+import { isEmpty } from '~/utils/isEmpty';
+import Voucher from '~/pages/Payment/Voucher';
 
 const SHIPPING_FEE = 30000;
 
@@ -15,6 +17,8 @@ function Payment() {
   const [numberPurchase, setNumberPurchase] = useState(1);
   const [isPopup, setIsPopup] = useState(false);
   const [addressIndex, setAddressIndex] = useState(0);
+  const [appliedVoucher, setAppliedVoucher] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [searchParams] = useSearchParams();
   const productId = searchParams.get('productId');
 
@@ -30,6 +34,7 @@ function Payment() {
       try {
         const { user } = await userLoader();
         setUserData(user);
+        
       } catch (error) {
         if (error.response.status === 401) {
           navigate('/login');
@@ -68,22 +73,16 @@ function Payment() {
       selectedAddress: userData.addresses[addressIndex]
     }
 
-    const response = await makeOrder(data);
+    const response = await makeOrder(data, paymentMethod);
 
     if (response.status === 200) {
       sessionStorage.setItem('successMessage', 'Đặt hàng thành công, vui lòng theo dõi trạng thái đơn hàng của bạn.');
-      navigate('/orders');
-    }
-  }
-
-  function isEmpty(obj) {
-    for (const prop in obj) {
-      if (Object.hasOwn(obj, prop)) {
-        return false;
+      if (response.data?.payUrl) {
+        window.location.href = response.data?.payUrl;
+      } else {
+        navigate('/orders');
       }
     }
-
-    return true;
   }
 
   if (!product || product === undefined || isEmpty(userData)) {
@@ -153,7 +152,7 @@ function Payment() {
               />
             </svg>
             <span className="text-gray-700 dark:text-gray-200">
-              {userData?.address?.length >= 0
+              {userData?.addresses?.length > 0
                 ? `${userData?.addresses[addressIndex]?.street}, ${userData?.addresses[addressIndex]?.commune}, ${userData?.addresses[addressIndex]?.district}, ${userData?.addresses[addressIndex]?.city}`
                 : 'Chưa nhập địa chỉ'
               }
@@ -286,9 +285,14 @@ function Payment() {
           </table>
         </div>
 
+        <Voucher appliedVoucher={appliedVoucher} setAppliedVoucher={setAppliedVoucher} />
+
         <PaymentSumary
           totalPrice={product.DiscountPrice ? product.DiscountPrice * numberPurchase : product.SellingPrice * numberPurchase}
           shippingFee={SHIPPING_FEE}
+          voucher={appliedVoucher}
+          paymentMethod={paymentMethod}
+          setPaymentMethod={setPaymentMethod}
           onClick={handlePurchase}
         />
 
