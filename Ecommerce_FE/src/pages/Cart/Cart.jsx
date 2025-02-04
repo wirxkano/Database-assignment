@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 function Cart() {
   const [products, setProducts] = useState([]);
+  const [checkedProducts, setCheckedProducts] = useState(new Set()); //store the ProductIDs of checked products
 
   useEffect(() => {
     const fetchCartDetail = async () => {
@@ -45,18 +46,37 @@ function Cart() {
     );
   };
 
-  const totalSellingPrice = products.reduce(
+  const handleCheckboxChange = (productId) => {
+    setCheckedProducts((prevChecked) => {
+      const newChecked = new Set(prevChecked); // Create a copy of the previous Set
+      if (newChecked.has(productId)) {
+        newChecked.delete(productId); // Uncheck: Remove productId
+      } else {
+        newChecked.add(productId); // Check: Add productId
+      }
+      return newChecked; // Update state
+    });
+  };
+
+  const selectedProducts = products.filter((product) =>
+    checkedProducts.has(product.ProductID)
+  );
+
+  const totalSellingPrice = selectedProducts.reduce(
     (total, product) => total + product.SellingPrice * product.Quantity,
     0
   );
-  
-  const totalDiscount = products.reduce(
+
+  const totalDiscount = selectedProducts.reduce(
     (total, product) =>
-      total + (product.DiscountPrice !== null ? (product.SellingPrice - product.DiscountPrice) * product.Quantity : 0),
+      total +
+      (product.DiscountPrice !== null
+        ? (product.SellingPrice - product.DiscountPrice) * product.Quantity
+        : 0),
     0
   );
-  
-  const totalOrderAmount = totalSellingPrice - totalDiscount;  
+
+  const totalOrderAmount = totalSellingPrice - totalDiscount;
 
   return (
     <>
@@ -81,6 +101,10 @@ function Cart() {
                           id={`checkbox-${product.ProductID}`}
                           type="checkbox"
                           value=""
+                          checked={checkedProducts.has(product.ProductID)}
+                          onChange={() =>
+                            handleCheckboxChange(product.ProductID)
+                          }
                           class="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         />
                         <a href="#" class="shrink-0 md:order-1">
@@ -171,13 +195,13 @@ function Cart() {
                                 </p>
                               </>
                             )}
-                            <p class="text-base font-bold text-gray-900 dark:text-white">
+                            {/* <p class="text-base font-bold text-gray-900 dark:text-white">
                               {(
                                 (product.DiscountPrice ??
                                   product.SellingPrice) * product.Quantity
                               )?.toLocaleString()}
                               ₫
-                            </p>
+                            </p> */}
                           </div>
                         </div>
 
@@ -562,9 +586,7 @@ function Cart() {
                   href="#"
                   class="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
                 >
-                  <Link to="/payment">
-                  Tiến hành thanh toán
-                  </Link>
+                  <Link to="/payment">Tiến hành thanh toán</Link>
                 </a>
 
                 <div class="flex items-center justify-center gap-2">
@@ -577,9 +599,7 @@ function Cart() {
                     title=""
                     class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 underline hover:no-underline dark:text-gray-500"
                   >
-                    <Link to="/">
-                    Tiếp tục mua sắm
-                    </Link>
+                    <Link to="/">Tiếp tục mua sắm</Link>
                     <svg
                       class="h-5 w-5"
                       aria-hidden="true"
@@ -612,7 +632,7 @@ function Cart() {
           </div>
         </div>
       </section>
-    <Footer />
+      <Footer />
     </>
   );
 }
