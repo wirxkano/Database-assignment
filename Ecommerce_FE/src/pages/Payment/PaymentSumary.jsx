@@ -5,7 +5,7 @@ function PaymentSummary({ totalPrice, shippingFee, onClick }) {
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
   return (
-    <div className="mt-8">
+    <div class="mt-8">
       <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
         <div className="flex items-center justify-between text-gray-600">
           <p className="text-base">Tạm tính:</p>
