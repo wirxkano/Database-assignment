@@ -59,9 +59,26 @@ const searchProducts = async (req, res) => {
   }
 }
 
+const getRelatedProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const products = await ProductModel.getRelatedProducts(id);
+    
+    if (products) {      
+      return res.status(200).json(products);
+    } else {
+      return res.status(400).json({ message: 'Failed to get products' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export const ProductController = {
   getAllProducts,
   retrieveTrendingProducts,
   getProductDetails,
-  searchProducts
+  searchProducts,
+  getRelatedProducts
 };

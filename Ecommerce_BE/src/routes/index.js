@@ -2,9 +2,9 @@ import express from 'express';
 import { UserRoutes } from '~/routes/UserRoutes';
 import { ProductRoutes } from '~/routes/ProductRoutes';
 import { OrderRoutes } from '~/routes/OrderRoutes';
-import { CartRoutes } from './CartRoutes';
-import { CouponRoutes } from './CouponRoutes';
-import { PaymentRoutes } from './PaymentRoutes';
+import { CartRoutes } from '~/routes/CartRoutes';
+import { CouponRoutes } from '~/routes/CouponRoutes';
+import { PaymentRoutes } from '~/routes/PaymentRoutes';
 
 const router = express.Router();
 

@@ -60,7 +60,7 @@ export const categoryData = [
 export const trendingProductData = [
   {
     ProductID: 1,
-    Name: 'Macbook',
+    ProductName: 'Macbook',
     ImgUrl: laptop,
     SellingPrice: '100.000',
     DiscountPrice: '50.000',
@@ -68,7 +68,7 @@ export const trendingProductData = [
   },
   {
     ProductID: 2,
-    Name: 'Iphone',
+    ProductName: 'Iphone',
     ImgUrl: smartphone2,
     SellingPrice: '1.000.000',
     DiscountPrice: '999.999',
@@ -76,7 +76,7 @@ export const trendingProductData = [
   },
   {
     ProductID: 3,
-    Name: 'TV không biết hiệu gì',
+    ProductName: 'TV không biết hiệu gì',
     ImgUrl: smarttv,
     SellingPrice: '2.000',
     DiscountPrice: '1.999',
@@ -84,7 +84,7 @@ export const trendingProductData = [
   },
   {
     ProductID: 4,
-    Name: 'Chuột Mickey',
+    ProductName: 'Chuột Mickey',
     ImgUrl: mouse,
     SellingPrice: '1.000.000.000',
     DiscountPrice: null,
@@ -92,7 +92,7 @@ export const trendingProductData = [
   },
   {
     ProductID: 5,
-    Name: 'Vẫn là Iphone',
+    ProductName: 'Vẫn là Iphone',
     ImgUrl: smartphone2,
     SellingPrice: '1.000.000',
     DiscountPrice: '999.999',
@@ -100,7 +100,7 @@ export const trendingProductData = [
   },
   {
     ProductID: 6,
-    Name: 'Vẫn là Iphone',
+    ProductName: 'Vẫn là Iphone',
     ImgUrl: smartphone2,
     SellingPrice: '1.000.000',
     DiscountPrice: '999.999',
@@ -367,4 +367,3 @@ export const couponData = [
     Quantity: 10
   }
 ];
-

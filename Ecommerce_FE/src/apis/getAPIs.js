@@ -1,5 +1,5 @@
-import { axiosInstance } from './axiosInstance';
-import { categoryData } from '~/data/mockData';
+import { axiosInstance } from "./axiosInstance";
+import { categoryData } from "~/data/mockData";
 
 export async function userLoader() {
   const response = await axiosInstance.get("/users/info");
@@ -16,7 +16,7 @@ export async function getSearchProductHistory() {
 
 export async function homeLoader() {
   const categories = categoryData;
-  const products = (await axiosInstance.get('/products/all')).data;
+  const products = (await axiosInstance.get("/products/all")).data;
 
   return { categories, products };
 }
@@ -27,8 +27,15 @@ export async function productDetailsLoader(id) {
   return response.data;
 }
 
+export async function getRelatedProducts(id) {
+  const response = await axiosInstance.get(`/products/related/${id}`);
+
+  return response;
+}
+
 export async function orderLoader() {
-  const orders = (await axiosInstance.get("/orders/history?status=All")).data.orders;
+  const orders = (await axiosInstance.get("/orders/history?status=All")).data
+    .orders;
 
   return { orders };
 }
@@ -51,10 +58,14 @@ export async function getProductsByKeyword(keyword) {
   return response;
 }
 
-export async function getCartItems() {
-  const cartItems = await axiosInstance.get('carts');
+export async function getCartDetail() {
+  try {
+    const response = await axiosInstance.get(`carts`);
   
-  return cartItems;
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function getCoupons() {

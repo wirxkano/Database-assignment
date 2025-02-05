@@ -4,8 +4,8 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { logoutAction } from '~/apis/postAPIs';
 import SearchBar from '~/components/SearchBar';
-import CartPreview from '~/pages/CartDetail/CartPreview';
-import { getCartItems } from '~/apis/getAPIs';
+import CartPreview from '~/pages/Cart/CartPreview';
+import { getCartDetail } from '~/apis/getAPIs';
 
 function Navbar() {
   const [userPopup, setUserPopup] = useState(false);
@@ -33,7 +33,7 @@ function Navbar() {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const response = await getCartItems();
+      const response = await getCartDetail();
       if (response.status === 200) {
         setCartItems(response.data);
         setNumberItems(response.data.length);
@@ -113,7 +113,7 @@ function Navbar() {
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 10V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v4m3-2 .917 11.923A1 1 0 0 1 17.92 21H6.08a1 1 0 0 1-.997-1.077L6 8h12Z"></path>
                 </svg>
               </Link>
-              <div className="bg-red-500 opacity-0 px-3 py-1 absolute top-5 right-1"></div>
+              <div className="bg-red-500 opacity-0 px-2 pl-3 py-1 absolute top-4 right-3"></div>
               {isLoggedIn && (
                 <div className="absolute top-7 right-0 z-10 w-96 hidden group-hover:block">
                   <CartPreview cartItems={cartItems} />

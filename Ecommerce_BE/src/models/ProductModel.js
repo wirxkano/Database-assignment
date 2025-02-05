@@ -24,23 +24,23 @@ const getAllProducts = async () => {
     return null;
   } catch (err) {
     console.log(err);
-    
+
     throw new Error(err);
   }
 };
 
 const retrieveTrendingProducts = async (startDate, endDate, n) => {
   const pool = getConnection();
-  
+
   try {
     const result = await pool
-    .request()
-    .input('StartDate', sql.Date, sqlHelpers.toDate(startDate))
-    .input('EndDate', sql.Date, sqlHelpers.toDate(endDate))
-    .input('N', sql.Int, sqlHelpers.toInt(n))
-    .execute('retrieveBestSellingProducts');
+      .request()
+      .input('StartDate', sql.Date, sqlHelpers.toDate(startDate))
+      .input('EndDate', sql.Date, sqlHelpers.toDate(endDate))
+      .input('N', sql.Int, sqlHelpers.toInt(n))
+      .execute('retrieveBestSellingProducts');
 
-  
+
     if (result.recordset.length >= 0) {
       return result.recordset;
     }
@@ -105,9 +105,39 @@ const searchProducts = async (keyword) => {
   }
 };
 
+const getRelatedProducts = async (id) => {
+  const pool = getConnection();
+
+  try {
+    const result = await pool
+      .request()
+      .input('ProductID', sql.Int, id)
+      .query(`
+        SELECT P.ProductID, P.Name AS ProductName, P.Description, 
+              P.SellingPrice, P.DiscountPrice, MIN(PI.ImgUrl) AS ImgUrl
+        FROM Product P
+        JOIN Brand B ON P.BrandID = B.BrandID
+        JOIN ProductImage PI ON P.ProductID = PI.ProductID
+        WHERE P.BrandID = (SELECT BrandID FROM Product WHERE ProductID = @ProductID)
+          AND P.ProductID <> @ProductID
+        GROUP BY P.ProductID, P.Name, P.Description, P.SellingPrice, P.DiscountPrice
+      `);
+
+    if (result.recordset.length >= 0) {
+      return result.recordset || {};
+    }
+    return null;
+  } catch (err) {
+    console.log(err);
+
+    throw new Error(err)
+  }
+};
+
 export const ProductModel = {
   getAllProducts,
   retrieveTrendingProducts,
   getProductDetails,
-  searchProducts
+  searchProducts,
+  getRelatedProducts
 };

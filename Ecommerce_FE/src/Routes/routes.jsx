@@ -10,8 +10,7 @@ import Order from '~/pages/Order/Order'
 import ProductDetail from '~/pages/Product/ProductDetail'
 import Payment from '~/pages/Payment/Payment'
 import ProductFound from '~/pages/Product/ProductFound'
-import CartDetail from '~/pages/CartDetail/cartDetail'
-
+import Cart from '~/pages/Cart/Cart'
 
 export const router = createBrowserRouter([
   {
@@ -60,7 +59,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/cart',
-    element: <CartDetail />,
+    element: <Cart />,
     errorElement: <ErrorPage />
   }
 ])

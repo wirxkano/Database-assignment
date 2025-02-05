@@ -60,7 +60,7 @@ function Voucher({ appliedVoucher, setAppliedVoucher }) {
             </button>
           </div>
           <div className="mt-5 max-h-[150px] overflow-y-auto pr-2">
-            {vouchers.map((voucher, index) => (
+            {vouchers.toSorted((a, b) => a.DiscountPercent - b.DiscountPercent).map((voucher, index) => (
               <div
                 key={voucher.CouponID}
                 className="flex justify-between p-2 border border-gray-300 rounded-md mb-2 cursor-pointer"
