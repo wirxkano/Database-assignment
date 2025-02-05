@@ -27,6 +27,12 @@ export async function productDetailsLoader(id) {
   return response.data;
 }
 
+export async function getRelatedProducts(id) {
+  const response = await axiosInstance.get(`/products/related/${id}`);
+
+  return response;
+}
+
 export async function orderLoader() {
   const orders = (await axiosInstance.get("/orders/history?status=All")).data
     .orders;
@@ -54,10 +60,16 @@ export async function getProductsByKeyword(keyword) {
 
 export async function getCartDetail() {
   try {
-    const response = await axiosInstance.get(`/carts`);
+    const response = await axiosInstance.get(`carts`);
   
     return response;
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function getCoupons() {
+  const coupons = await axiosInstance.get('coupons');
+  
+  return coupons;
 }

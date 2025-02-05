@@ -1,11 +1,13 @@
 import { getConnection, sql } from "~/config/connectDB";
 
-
 const getCartDetails = async (id) => {
   const pool = getConnection();
 
   try {
-    const result = await pool.request().input("CustomerID", sql.Int, id).query(`
+    const result = await pool
+      .request()
+      .input("CustomerID", sql.Int, id)
+      .query(`
       SELECT P.ProductID, P.Name AS ProductName, P.Description, P.SellingPrice, P.DiscountPrice, CP.Quantity, MIN(PI.ImgUrl) AS ImgUrl
         FROM Customer Cus
         JOIN Cart C ON Cus.CustomerID = C.CustomerID
