@@ -32,4 +32,29 @@ const deleteProductInCart = async (req, res) => {
   }
 };
 
-export const CartController = { getCartDetails, deleteProductInCart };
+const putProductInCart = async (req, res) => {
+  try {
+    const customerId = req.userId;
+    const productId = parseInt(req.params.productId);
+    const { quantity } = req.body;
+
+    const result = await CartModel.putProductInCart(
+      customerId,
+      productId,
+      quantity
+    );
+    if (result) {
+      return res.status(200).json({ message: "Add product successfully" });
+    } else {
+      return res.status(500).json({ message: "Failed to add product in cart" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const CartController = {
+  getCartDetails,
+  deleteProductInCart,
+  putProductInCart,
+};

@@ -31,8 +31,7 @@ const deleteProductInCart = async (customerId, productId) => {
     const result = await pool
       .request()
       .input("CustomerID", sql.Int, customerId)
-      .input("ProductID", sql.Int, productId)
-      .query(`DELETE FROM CartHasProduct
+      .input("ProductID", sql.Int, productId).query(`DELETE FROM CartHasProduct
         WHERE CartID = (SELECT CartID FROM Cart WHERE CustomerID = @CustomerID)
         AND ProductID = @ProductID
       `);
@@ -51,4 +50,48 @@ const deleteProductInCart = async (customerId, productId) => {
   }
 };
 
-export const CartModel = { getCartDetails, deleteProductInCart };
+const putProductInCart = async (customerId, productId, quantity) => {
+  const pool = getConnection();
+  try {
+    // Check if the product already exists in the cart
+    const productInCartResult = await pool
+      .request()
+      .input("CustomerID", sql.Int, customerId)
+      .input("ProductID", sql.Int, productId).query(`SELECT CP.Quantity 
+        FROM Cart C
+        JOIN CartHasProduct CP ON C.CartID = CP.CartID
+        WHERE C.CustomerID = @CustomerID AND CP.ProductID = @ProductID`);
+    if (productInCartResult.recordset.length > 0) {
+      await pool
+        .request()
+        .input("CustomerID", sql.Int, customerId)
+        .input("ProductID".sql.Int, productId)
+        .input("Quantity", sql.Int, quantity).query(`UPDATE CP
+          SET CP.Quantity = CP.Quantity + @Quantity
+          FROM Cart C
+          JOIN CartHasProduct CP ON C.CartID = CP.CartID
+          WHERE C.CustomerID = @CustomerID AND CP.ProductID = @ProductID`);
+
+      return { message: "Product quantity updated in cart" };
+    } else {
+      // Insert the product into the cart if it doesn't exist
+      await pool
+        .request()
+        .input("CustomerID", sql.Int, customerId)
+        .input("ProductID", sql.Int, productId)
+        .input("Quantity", sql.Int, quantity)
+        .query(`INSERT INTO CartHasProduct (CartID, ProductID, Quantity)
+          VALUES (
+            (SELECT CartID FROM Cart WHERE CustomerID = @CustomerID),
+            @ProductID,
+            @Quantity`);
+
+      return { message: "Product added to cart" };
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const CartModel = { getCartDetails, deleteProductInCart, putProductInCart };

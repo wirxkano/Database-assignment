@@ -126,7 +126,7 @@ function Cart() {
                       </a>
 
                       <label htmlFor="counter-input" className="sr-only">
-                        Choose quantity:
+                        Số lượng:
                       </label>
                       <div className="flex items-center justify-between md:order-3 md:justify-end">
                         <div className="flex items-center">
