@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCartDetail } from "~/apis/getAPIs";
+import { deleteProductInCart } from "~/apis/deleteAPIs";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
 import { Link } from "react-router-dom";
@@ -40,11 +41,21 @@ function Cart() {
     );
   };
 
-  const handleDeleteProducts = (productId) => {
-    setProducts((prevProducts) =>
-      prevProducts.filter((product) => product.ProductID !== productId)
-    );
-  };
+  const handleDelete = async (productId) => {
+    try {
+      //delete product
+      await deleteProductInCart(productId);
+      alert('Product deleted successfully!');
+      
+      //update cart
+      const response = await getCartDetail();
+      if (response.status === 200) {
+        setProducts(response.data);  // Cập nhật lại danh sách giỏ hàng
+      }
+    } catch (error) {
+      alert('Failed to delete product. Please try again.');
+    }
+  }
 
   const handleCheckboxChange = (productId) => {
     setCheckedProducts((prevChecked) => {
@@ -240,7 +251,7 @@ function Cart() {
 
                           <button
                             onClick={() =>
-                              handleDeleteProducts(product.ProductID)
+                              handleDelete(product.ProductID)
                             }
                             type="button"
                             className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-red-700 dark:hover:text-red-700"
