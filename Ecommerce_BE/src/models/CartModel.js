@@ -57,17 +57,20 @@ const putProductInCart = async (customerId, productId, quantity) => {
     const productInCartResult = await pool
       .request()
       .input("CustomerID", sql.Int, customerId)
-      .input("ProductID", sql.Int, productId).query(`SELECT CP.Quantity 
+      .input("ProductID", sql.Int, productId)
+      .query(`SELECT CP.Quantity 
         FROM Cart C
         JOIN CartHasProduct CP ON C.CartID = CP.CartID
         WHERE C.CustomerID = @CustomerID AND CP.ProductID = @ProductID`);
+    
     if (productInCartResult.recordset.length > 0) {
+      
       await pool
         .request()
         .input("CustomerID", sql.Int, customerId)
-        .input("ProductID".sql.Int, productId)
-        .input("Quantity", sql.Int, quantity).query(`UPDATE CP
-          SET CP.Quantity = CP.Quantity + @Quantity
+        .input("ProductID", sql.Int, productId)
+        .input("Quantity", sql.Int, quantity).query(`UPDATE CartHasProduct
+          SET CartHasProduct.Quantity = CP.Quantity + @Quantity
           FROM Cart C
           JOIN CartHasProduct CP ON C.CartID = CP.CartID
           WHERE C.CustomerID = @CustomerID AND CP.ProductID = @ProductID`);
@@ -84,7 +87,8 @@ const putProductInCart = async (customerId, productId, quantity) => {
           VALUES (
             (SELECT CartID FROM Cart WHERE CustomerID = @CustomerID),
             @ProductID,
-            @Quantity`);
+            @Quantity
+          )`);
 
       return { message: "Product added to cart" };
     }
