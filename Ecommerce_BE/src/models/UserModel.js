@@ -1,6 +1,31 @@
 import { getConnection, sql } from '~/config/connectDB';
 import { formatUserData } from '~/services/UserServices';
 
+const createNewCartAndWishlist = async(customerId) => {
+  const pool = getConnection();
+  try {
+    const result = await pool
+      .request()
+      .input('CustomerID', sql.Int, customerId)
+      .query(`
+        INSERT INTO Cart (CustomerID)
+        VALUES (@CustomerID)
+        INSERT INTO WishList (CustomerID)
+        VALUES (@CustomerID)
+      `);
+    
+    if (result.rowsAffected.length >= 0) {
+      return true;
+    }
+
+    return false;
+  } catch (err) {
+    console.log(err);
+    
+    throw new Error(err.message)
+  }
+};
+
 const register = async (firstName, lastName, email, password, confirmPassword) => {
   const pool = getConnection();
   try {
@@ -11,16 +36,19 @@ const register = async (firstName, lastName, email, password, confirmPassword) =
       .input('Email', sql.NVarChar, email)
       .input('Password', sql.VarChar, password)
       .input('PasswordConfirmation', sql.VarChar, confirmPassword)
+      .output('PersonID', sql.Int)
       .execute('InsertNewPerson');
+
+    const customerId = result.output.PersonID;
     
-    if (result.returnValue >= 0) {
-      return 1;
+    if (customerId) {
+      const cartCreated = await createNewCartAndWishlist(customerId)
+      return cartCreated;
     }
 
-    return 0;
+    return false;
   } catch (err) {
-    // console.log(err);
-    
+    console.log(err);
     throw new Error(err.message)
   }
 };
