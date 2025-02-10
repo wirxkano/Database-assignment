@@ -33,7 +33,7 @@ const login = async (email, password) => {
       .input('Email', sql.NVarChar, email)
       .input('Password', sql.VarChar, password)
       .execute('AuthenticateUser');
-
+    
     if (result.recordset.length > 0) {
       return result.recordset[0];
     }

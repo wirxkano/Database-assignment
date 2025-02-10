@@ -33,6 +33,12 @@ export async function getRelatedProducts(id) {
   return response;
 }
 
+export async function getReviewsOfProduct(id) {
+  const response = await axiosInstance.get(`/reviews/${id}`);
+
+  return response;
+}
+
 export async function orderLoader() {
   const orders = (await axiosInstance.get("/orders/history?status=All")).data
     .orders;
@@ -63,8 +69,10 @@ export async function getCartDetail() {
     const response = await axiosInstance.get(`carts`);
   
     return response;
+  // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    console.log(error);
+    // don't care
+    // console.log(error);
   }
 }
 

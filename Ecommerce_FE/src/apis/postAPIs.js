@@ -32,7 +32,7 @@ export async function registerAction({ request }) {
   };
 
   const response = await axiosInstance.post('users/register', data);
-  
+
   if (response.status === 201) {
     sessionStorage.setItem('successMessage', 'Đăng ký tài khoản thành công!');
     return redirect('/login');
@@ -47,13 +47,13 @@ export async function logoutAction() {
 
 export async function storeSearchProductHistory(data) {
   const response = await axiosInstance.post('/users/search-history', { keyword: data });
-  
+
   return response;
 }
 
 export async function retrieveTrendingProducts(data) {
   const response = await axiosInstance.post('/products/trending', data);
-  
+
   return response;
 }
 
@@ -64,6 +64,12 @@ export async function makeOrder(data, paymentMethod = "cash") {
   } else if (paymentMethod === "card") {
     response = await axiosInstance.post('/payments/momo', data);
   }
-  
+
+  return response;
+}
+
+export async function storeReview(data, productId) {
+  const response = await axiosInstance.post(`/reviews/${productId}`, data);
+
   return response;
 }

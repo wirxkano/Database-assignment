@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { getRelatedProducts, productDetailsLoader } from '~/apis/getAPIs';
 import Navbar from '~/components/Navbar';
 import Product from './Product';
@@ -8,6 +8,7 @@ import Footer from '~/components/Footer';
 import Review from '../Review/Review';
 
 function ProductDetail() {
+  const location = useLocation();
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [relatedProduct, setRelatedProduct] = useState([]);
@@ -43,6 +44,15 @@ function ProductDetail() {
     const endIndex = startIndex + pageSize;
     return relatedProduct.slice(startIndex, endIndex);
   };
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.hash]);
 
   return (
     <div className="bg-gray-100">
@@ -111,9 +121,9 @@ function ProductDetail() {
                   );
                 })}
 
-                <div className="underline hover:no-underline cursor-pointer">
-                  {product.AverageRate ? product.AverageRate.toFixed(1) : 0.0} Đánh giá
-                </div>
+                <Link to="#reviews-of-product" className="underline hover:no-underline cursor-pointer">
+                  {product.AverageRate ? product.AverageRate.toFixed(1) : 0.0} sao
+                </Link>
               </div>
             </div>
 
@@ -221,7 +231,7 @@ function ProductDetail() {
 
       </div>
 
-      <Review />
+      <Review productID={id} product={product} />
       <hr />
 
       <Footer />
