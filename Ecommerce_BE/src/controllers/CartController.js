@@ -34,9 +34,9 @@ const deleteProductInCart = async (req, res) => {
 
 const putProductInCart = async (req, res) => {
   try {
-    // const customerId = req.userId;
+    const customerId = req.userId;
     const productId = parseInt(req.params.productId);
-    const { quantity, customerId } = req.body;
+    const { quantity } = req.body;
 
     const result = await CartModel.putProductInCart(
       customerId,
