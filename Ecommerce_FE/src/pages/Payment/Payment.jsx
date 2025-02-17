@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { userLoader } from '~/apis/getAPIs';
-import Navbar from '~/components/Navbar';
-import PaymentSumary from '~/pages/Payment/PaymentSumary';
-import { makeOrder } from '~/apis/postAPIs';
-import { isEmpty } from '~/utils/isEmpty';
-import Voucher from '~/pages/Payment/Voucher';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { userLoader } from "~/apis/getAPIs";
+import Navbar from "~/components/Navbar";
+import PaymentSumary from "~/pages/Payment/PaymentSumary";
+import { makeOrder } from "~/apis/postAPIs";
+import { isEmpty } from "~/utils/isEmpty";
+import Voucher from "~/pages/Payment/Voucher";
 
 const SHIPPING_FEE = 30000;
 
 function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
-  const product = location.state?.product;
+  const products = location.state?.selectedProducts || [];
   const [userData, setUserData] = useState({});
   const [numberPurchase, setNumberPurchase] = useState(1);
   const [isPopup, setIsPopup] = useState(false);
@@ -20,13 +20,12 @@ function Payment() {
   const [appliedVoucher, setAppliedVoucher] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [searchParams] = useSearchParams();
-  const productId = searchParams.get('productId');
+  const productId = searchParams.get("productId");
 
   useEffect(() => {
     if (!(sessionStorage.getItem("isLoggedIn") === "true")) {
       navigate("/login");
     }
-
   }, [navigate]);
 
   useEffect(() => {
@@ -34,33 +33,52 @@ function Payment() {
       try {
         const { user } = await userLoader();
         setUserData(user);
-        
       } catch (error) {
         if (error.response.status === 401) {
-          navigate('/login');
+          navigate("/login");
         }
       }
-    }
+    };
 
     fecthUser();
   }, [navigate]);
 
-  const handleIncrease = () => {
-    if (numberPurchase < product.Quantity) {
-      setNumberPurchase((prev) => prev + 1);
-    }
-  };
+  // const handleIncrease = () => {
+  //   if (numberPurchase < product.Quantity) {
+  //     setNumberPurchase((prev) => prev + 1);
+  //   }
+  // };
 
-  const handleDecrease = () => {
-    if (numberPurchase > 1) {
-      setNumberPurchase((prev) => prev - 1);
-    }
-  };
+  // const handleDecrease = () => {
+  //   if (numberPurchase > 1) {
+  //     setNumberPurchase((prev) => prev - 1);
+  //   }
+  // };
 
-  const handleChange = (e) => {
-    const value = Math.max(1, Math.min(product.Quantity, Number(e.target.value)));
-    setNumberPurchase(value);
-  };
+  // const handleChange = (e) => {
+  //   const value = Math.max(
+  //     1,
+  //     Math.min(product.Quantity, Number(e.target.value))
+  //   );
+  //   setNumberPurchase(value);
+  // };
+
+  const totalSellingPrice = products.reduce(
+    (total, product) => total + product.SellingPrice * product.Quantity,
+    0
+  );
+  
+  const totalDiscount = products.reduce(
+    (total, product) =>
+      total +
+      (product.DiscountPrice !== null
+        ? (product.SellingPrice - product.DiscountPrice) * product.Quantity
+        : 0),
+    0
+  );
+  
+
+  const totalOrderAmount = totalSellingPrice - totalDiscount;
 
   const handlePurchase = async () => {
     const data = {
@@ -68,33 +86,53 @@ function Payment() {
       product: {
         productId,
         numberPurchase,
-        priceAtOrderedTime: product.DiscountPrice ? product.DiscountPrice : product.SellingPrice
+        priceAtOrderedTime: product.DiscountPrice
+          ? product.DiscountPrice
+          : product.SellingPrice,
       },
-      selectedAddress: userData.addresses[addressIndex]
-    }
+      selectedAddress: userData.addresses[addressIndex],
+    };
 
     const response = await makeOrder(data, paymentMethod);
 
     if (response.status === 200) {
-      sessionStorage.setItem('successMessage', 'Đặt hàng thành công, vui lòng theo dõi trạng thái đơn hàng của bạn.');
+      sessionStorage.setItem(
+        "successMessage",
+        "Đặt hàng thành công, vui lòng theo dõi trạng thái đơn hàng của bạn."
+      );
       if (response.data?.payUrl) {
         window.location.href = response.data?.payUrl;
       } else {
-        navigate('/orders');
+        navigate("/orders");
       }
     }
-  }
+  };
 
-  if (!product || product === undefined || isEmpty(userData)) {
+  if (!products || products === undefined || isEmpty(userData)) {
     return (
-      <div role="status" className="flex items-center justify-center w-full h-screen">
-        <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-          <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+      <div
+        role="status"
+        className="flex items-center justify-center w-full h-screen"
+      >
+        <svg
+          aria-hidden="true"
+          className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary-500"
+          viewBox="0 0 100 101"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+            fill="currentColor"
+          />
+          <path
+            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+            fill="currentFill"
+          />
         </svg>
         <span className="sr-only">Loading...</span>
       </div>
-    )
+    );
   }
 
   return (
@@ -102,7 +140,9 @@ function Payment() {
       <Navbar />
       <div className="mx-16 my-8">
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          <p className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Thông tin người nhận:</p>
+          <p className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
+            Thông tin người nhận:
+          </p>
           <div className="flex items-center gap-3 mb-3">
             <svg
               className="w-6 h-6 text-primary-500"
@@ -119,7 +159,9 @@ function Payment() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-gray-700 dark:text-gray-200">{userData?.fullName}</span>
+            <span className="text-gray-700 dark:text-gray-200">
+              {userData?.fullName}
+            </span>
           </div>
           <div className="flex items-center gap-3 mb-3">
             <svg
@@ -133,7 +175,9 @@ function Payment() {
             >
               <path d="M7.978 4a2.553 2.553 0 0 0-1.926.877C4.233 6.7 3.699 8.751 4.153 10.814c.44 1.995 1.778 3.893 3.456 5.572 1.68 1.679 3.577 3.018 5.57 3.459 2.062.456 4.115-.073 5.94-1.885a2.556 2.556 0 0 0 .001-3.861l-1.21-1.21a2.689 2.689 0 0 0-3.802 0l-.617.618a.806.806 0 0 1-1.14 0l-1.854-1.855a.807.807 0 0 1 0-1.14l.618-.62a2.692 2.692 0 0 0 0-3.803l-1.21-1.211A2.555 2.555 0 0 0 7.978 4Z" />
             </svg>
-            <span className="text-gray-700 dark:text-gray-200">{userData?.phone}</span>
+            <span className="text-gray-700 dark:text-gray-200">
+              {userData?.phone}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <svg
@@ -154,8 +198,7 @@ function Payment() {
             <span className="text-gray-700 dark:text-gray-200">
               {userData?.addresses?.length > 0
                 ? `${userData?.addresses[addressIndex]?.street}, ${userData?.addresses[addressIndex]?.commune}, ${userData?.addresses[addressIndex]?.district}, ${userData?.addresses[addressIndex]?.city}`
-                : 'Chưa nhập địa chỉ'
-              }
+                : "Chưa nhập địa chỉ"}
             </span>
             <button
               className="text-primary-500"
@@ -176,10 +219,11 @@ function Payment() {
                 {userData.addresses.map((address, index) => (
                   <label
                     key={index}
-                    className={`flex justify-between items-center p-4 border rounded-md ${addressIndex === index
-                      ? 'bg-teal-50 border-teal-200'
-                      : 'bg-gray-50 border-gray-300'
-                      } hover:shadow-md transition`}
+                    className={`flex justify-between items-center p-4 border rounded-md ${
+                      addressIndex === index
+                        ? "bg-teal-50 border-teal-200"
+                        : "bg-gray-50 border-gray-300"
+                    } hover:shadow-md transition`}
                   >
                     <span className="text-gray-800 dark:text-gray-200">
                       {`${address.street}, ${address.commune}, ${address.district}, ${address.city}`}
@@ -230,72 +274,101 @@ function Payment() {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white border-b">
-                <td className="p-4">
-                  <img src={product.ImgUrl} className="w-16 md:w-32 max-w-full max-h-full" />
-                </td>
-                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                  {product.Name}
-                </td>
-                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                  {product.DiscountPrice ? product?.DiscountPrice.toLocaleString() : product?.SellingPrice.toLocaleString()}đ
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center">
-                    <button
-                      onClick={handleDecrease}
-                      className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                      type="button"
-                    >
-                      <span className="sr-only">Decrease quantity</span>
-                      <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                        <path stroke="currentColor" d="M1 1h16" />
-                      </svg>
-                    </button>
-                    <div>
-                      <input
-                        type="number"
-                        id="first_product"
-                        value={numberPurchase}
-                        className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        min="1"
-                        max={product.Quantity}
-                        onChange={handleChange}
-                        required
-                      />
+              {products.map((product) => (
+                <tr className="bg-white border-b">
+                  <td className="p-4">
+                    <img
+                      src={product.ImgUrl}
+                      className="w-16 md:w-32 max-w-full max-h-full"
+                    />
+                  </td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {product.ProductName}
+                  </td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {product.DiscountPrice
+                      ? product?.DiscountPrice.toLocaleString()
+                      : product?.SellingPrice.toLocaleString()}
+                    đ
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      {/* <button
+                        onClick={handleDecrease}
+                        className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Decrease quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 2"
+                        >
+                          <path stroke="currentColor" d="M1 1h16" />
+                        </svg>
+                      </button> */}
+                      <div>
+                        <input
+                          type="number"
+                          id="first_product"
+                          value={product.Quantity}
+                          className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          // min="1"
+                          // max={product.Quantity}
+                          // onChange={handleChange}
+                          // required
+                          readOnly
+                        />
+                      </div>
+                      {/* <button
+                        onClick={handleIncrease}
+                        className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Increase quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 18"
+                        >
+                          <path stroke="currentColor" d="M9 1v16M1 9h16" />
+                        </svg>
+                      </button> */}
                     </div>
-                    <button
-                      onClick={handleIncrease}
-                      className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                      type="button"
-                    >
-                      <span className="sr-only">Increase quantity</span>
-                      <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                        <path stroke="currentColor" d="M9 1v16M1 9h16" />
-                      </svg>
-                    </button>
-                  </div>
-
-                </td>
-                <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                  {product.DiscountPrice ? (product.DiscountPrice * numberPurchase)?.toLocaleString() : (product.SellingPrice * numberPurchase)?.toLocaleString()}đ
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                    {product.DiscountPrice
+                      ? (
+                          product.DiscountPrice * product.Quantity
+                        )?.toLocaleString()
+                      : (
+                          product.SellingPrice * product.Quantity
+                        )?.toLocaleString()}
+                    đ
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        <Voucher appliedVoucher={appliedVoucher} setAppliedVoucher={setAppliedVoucher} />
+        <Voucher
+          appliedVoucher={appliedVoucher}
+          setAppliedVoucher={setAppliedVoucher}
+        />
 
         <PaymentSumary
-          totalPrice={product.DiscountPrice ? product.DiscountPrice * numberPurchase : product.SellingPrice * numberPurchase}
+          totalPrice={totalOrderAmount}
           shippingFee={SHIPPING_FEE}
           voucher={appliedVoucher}
           paymentMethod={paymentMethod}
           setPaymentMethod={setPaymentMethod}
           onClick={handlePurchase}
         />
-
       </div>
     </div>
   );

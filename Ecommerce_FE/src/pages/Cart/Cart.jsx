@@ -4,10 +4,12 @@ import { deleteProductInCart } from "~/apis/deleteAPIs";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [products, setProducts] = useState([]);
   const [checkedProducts, setCheckedProducts] = useState(new Set()); //store the ProductIDs of checked products
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartDetail = async () => {
@@ -45,17 +47,17 @@ function Cart() {
     try {
       //delete product
       await deleteProductInCart(productId);
-      alert('Product deleted successfully!');
-      
+      alert("Product deleted successfully!");
+
       //update cart
       const response = await getCartDetail();
       if (response.status === 200) {
-        setProducts(response.data);  // Cập nhật lại danh sách giỏ hàng
+        setProducts(response.data); // Cập nhật lại danh sách giỏ hàng
       }
     } catch (error) {
-      alert('Failed to delete product. Please try again.');
+      alert("Failed to delete product. Please try again.");
     }
-  }
+  };
 
   const handleCheckboxChange = (productId) => {
     setCheckedProducts((prevChecked) => {
@@ -69,6 +71,7 @@ function Cart() {
     });
   };
 
+  // Get selected products
   const selectedProducts = products.filter((product) =>
     checkedProducts.has(product.ProductID)
   );
@@ -88,6 +91,21 @@ function Cart() {
   );
 
   const totalOrderAmount = totalSellingPrice - totalDiscount;
+
+  // Handle Proceed to payment
+  const handleProceedToPayment = () => {
+    setProducts((prevProducts) => {
+      const selectedProducts = prevProducts.filter((product) =>
+        checkedProducts.has(product.ProductID)
+      );
+
+      if (selectedProducts.length === 0) {
+        alert("Vui lòng chọn sản phẩm để tiến hành thanh toán");
+        return prevProducts;
+      }
+      navigate("/payment", { state: { selectedProducts } });
+    });
+  };
 
   return (
     <>
@@ -112,9 +130,7 @@ function Cart() {
                         type="checkbox"
                         value=""
                         checked={checkedProducts.has(product.ProductID)}
-                        onChange={() =>
-                          handleCheckboxChange(product.ProductID)
-                        }
+                        onChange={() => handleCheckboxChange(product.ProductID)}
                         className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                       />
                       <a href="#" className="shrink-0 md:order-1">
@@ -205,13 +221,6 @@ function Cart() {
                               </p>
                             </>
                           )}
-                          {/* <p className="text-base font-bold text-gray-900 dark:text-white">
-                              {(
-                                (product.DiscountPrice ??
-                                  product.SellingPrice) * product.Quantity
-                              )?.toLocaleString()}
-                              ₫
-                            </p> */}
                         </div>
                       </div>
 
@@ -250,9 +259,7 @@ function Cart() {
                           </button>
 
                           <button
-                            onClick={() =>
-                              handleDelete(product.ProductID)
-                            }
+                            onClick={() => handleDelete(product.ProductID)}
                             type="button"
                             className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-red-700 dark:hover:text-red-700"
                           >
@@ -280,6 +287,7 @@ function Cart() {
                   </div>
                 ))}
               </div>
+              {/* Product suggestion */}
               <div className="hidden xl:mt-8 xl:block">
                 <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
                   People also bought
@@ -591,12 +599,18 @@ function Cart() {
                   </dl>
                 </div>
 
-                <a
+                {/* <a
                   href="#"
                   className="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
                 >
                   <Link to="/payment">Tiến hành thanh toán</Link>
-                </a>
+                </a> */}
+                <button
+                  onClick={handleProceedToPayment}
+                  className="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                >
+                  Tiến hành thanh toán
+                </button>
 
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -627,16 +641,6 @@ function Cart() {
                   </a>
                 </div>
               </div>
-
-              {/* <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                <form className="space-y-4">
-                  <div>
-                    <label for="voucher" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Do you have a voucher or gift card? </label>
-                    <input type="text" id="voucher" className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-gray-500 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-gray-500 dark:focus:ring-gray-500" placeholder="" required />
-                  </div>
-                  <button type="submit" className="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">Apply Code</button>
-                </form>
-              </div> */}
             </div>
           </div>
         </div>
