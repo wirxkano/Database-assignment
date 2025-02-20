@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-import { isEmpty } from '~/utils/isEmpty';
 import PaymentMethods from './PaymentMethods';
 
-function PaymentSummary({ totalPrice, shippingFee, voucher = {}, onClick, paymentMethod = "cash", setPaymentMethod }) {
-  let discountPrice = 0;
+function PaymentSummary({ totalPrice, shippingFee, discountPrice, onClick, paymentMethod = "cash", setPaymentMethod }) {
   const lstPaymentMethods = [
     {
       id: "cash",
@@ -27,14 +25,6 @@ function PaymentSummary({ totalPrice, shippingFee, voucher = {}, onClick, paymen
       </svg>
     }
   ]
-
-  if (!isEmpty(voucher)) {
-    if (voucher?.Title === 'FREESHIP') {
-      discountPrice = shippingFee;
-    } else {
-      discountPrice = totalPrice * voucher?.DiscountPercent / 100;
-    }
-  }
 
   return (
     <div className="mt-2">

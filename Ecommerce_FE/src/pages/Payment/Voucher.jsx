@@ -50,7 +50,8 @@ function Voucher({ appliedVoucher, setAppliedVoucher }) {
               type="text"
               placeholder="Mã giảm giá"
               className="w-[calc(100%-80px)] p-2 mr-0.5 flex-1 border border-[#cccccc] rounded-[2px] outline-none focus:border-[#a8a8a8] focus:shadow-md focus:shadow-gray-400"
-              value={selectedVoucher.Title}
+              value={selectedVoucher?.Title}
+              readOnly
             />
             <button
               className="p-2 whitespace-nowrap bg-primary-500 text-white border-none rounded-sm cursor-pointer hover:bg-primary-600"

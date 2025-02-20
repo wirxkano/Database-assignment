@@ -43,9 +43,12 @@ const searchOrder = async (customerID, orderID) => {
 
 const storeOrder = async (customerID, data, status = 'Processing') => {
   const pool = getConnection();
+  const transaction = pool.transaction();
   
   try {
-    const orderResult = await pool
+    await transaction.begin();
+
+    const orderResult = await transaction
       .request()
       .input('CustomerID', sql.Int, customerID)
       .input('Status', sql.NVarChar, status)
@@ -54,30 +57,38 @@ const storeOrder = async (customerID, data, status = 'Processing') => {
       .input('District', sql.NVarChar, data.selectedAddress.district)
       .input('City', sql.NVarChar, data.selectedAddress.city)
       .input('CreatedAt', sql.DateTime, new Date())
+      .input('TotalPrice', sql.Decimal, data.totalPrice)
       .query(`
-        INSERT INTO [Order] (Status, Street, Commune, District, City, CreatedAt, CustomerID)
+        INSERT INTO [Order] (Status, Street, Commune, District, City, CreatedAt, CustomerID, TotalPrice)
         OUTPUT INSERTED.OrderID
-        VALUES (@Status, @Street, @Commune, @District, @City, @CreatedAt, @CustomerID)
+        VALUES (@Status, @Street, @Commune, @District, @City, @CreatedAt, @CustomerID, @TotalPrice)
       `);
 
     const orderID = orderResult.recordset[0].OrderID;
-    const orderDetailsResult = await pool
-      .request()
-      .input('OrderID', sql.Int, orderID)
-      .input('ProductID', sql.Int, data.product.productId)
-      .input('Quantity', sql.Int, data.product.numberPurchase)
-      .input('PriceAtOrderedTime', sql.Int, data.product.priceAtOrderedTime)
-      .query(`
-        INSERT INTO OrderProduct (OrderID, ProductID, Quantity, PriceAtOrderedTime)
-        VALUES (@OrderID, @ProductID, @Quantity, @PriceAtOrderedTime)
-      `);
+    
+    let query = `INSERT INTO OrderProduct (OrderID, ProductID, Quantity, PriceAtOrderedTime) VALUES `;
+    const values = data.products.map((_, index) => 
+      `(@OrderID, @ProductID${index}, @Quantity${index}, @PriceAtOrderedTime${index})`
+    ).join(', '); 
 
-    if (orderResult.rowsAffected[0] > 0 && orderDetailsResult.rowsAffected[0] > 0) {
-      return 1;
-    }
+    query += values;
 
-    return 0;
+    const request = transaction.request();
+    request.input('OrderID', sql.Int, orderID);
+
+    data.products.forEach((product, index) => {
+      request.input(`ProductID${index}`, sql.Int, product.productId);
+      request.input(`Quantity${index}`, sql.Int, product.numberPurchase);
+      request.input(`PriceAtOrderedTime${index}`, sql.Decimal, product.priceAtOrderedTime);
+    });
+
+    await request.query(query);
+    await transaction.commit();
+
+    return 1;
+
   } catch (err) {
+    await transaction.rollback();
     console.log(err);
     
     throw new Error(err)

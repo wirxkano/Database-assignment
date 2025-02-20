@@ -58,18 +58,13 @@ export async function retrieveTrendingProducts(data) {
 }
 
 export async function makeOrder(data, paymentMethod = "cash") {
-  let response;
-  if (paymentMethod === "cash") {
-    response = await axiosInstance.post('/payments/cash', data);
-  } else if (paymentMethod === "card") {
-    response = await axiosInstance.post('/payments/momo', data);
-  }
+  const response = await axiosInstance.post(`/payments/${paymentMethod}`, data);
 
   return response;
 }
 
 export async function storeReview(data, productId) {
   const response = await axiosInstance.post(`/reviews/${productId}`, data);
-
+  
   return response;
 }

@@ -15,6 +15,7 @@ function ProductDetail() {
   const [isLove, setIsLove] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [numProducts, setNumProducts] = useState(0);
+  const [numberPurchase, setNumberPurchase] = useState(1);
   const pageSize = 3;
 
   useEffect(() => {
@@ -25,7 +26,7 @@ function ProductDetail() {
     const fetchProduct = async () => {
       const response = await productDetailsLoader(id);
       setProduct(response);
-    }
+    };
 
     const fetchRelatedProducts = async () => {
       const response = await getRelatedProducts(id);
@@ -33,7 +34,7 @@ function ProductDetail() {
         setRelatedProduct(response.data);
         setNumProducts(response.data.length);
       }
-    }
+    };
 
     fetchProduct();
     fetchRelatedProducts();
@@ -54,6 +55,26 @@ function ProductDetail() {
     }
   }, [location.hash]);
 
+  const handleIncrease = () => {
+    if (numberPurchase < product.Quantity) {
+      setNumberPurchase((prev) => prev + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (numberPurchase > 1) {
+      setNumberPurchase((prev) => prev - 1);
+    }
+  };
+
+  const handleChange = (e) => {
+    const value = Math.max(
+      1,
+      Math.min(product.Quantity, Number(e.target.value))
+    );
+    setNumberPurchase(value);
+  };
+
   return (
     <div className="bg-gray-100">
       <Navbar />
@@ -67,18 +88,23 @@ function ProductDetail() {
             />
           </div>
 
-
           <div className="flex-1">
             <p className="text-sm text-gray-500 mb-2">{product.CategoryName}</p>
             <h1 className="text-2xl font-bold text-gray-800">{product.Name}</h1>
 
             <div className="flex items-center gap-4 my-6">
               {product.DiscountPrice === null ? (
-                <span className="text-2xl text-gray-800 font-bold">{product?.SellingPrice?.toLocaleString()}₫</span>
+                <span className="text-2xl text-gray-800 font-bold">
+                  {product?.SellingPrice?.toLocaleString()}₫
+                </span>
               ) : (
                 <>
-                  <span className="text-2xl text-red-500 font-bold">{product?.DiscountPrice?.toLocaleString()}₫</span>
-                  <span className="text-lg text-gray-400 line-through">{product?.SellingPrice?.toLocaleString()}₫</span>
+                  <span className="text-2xl text-red-500 font-bold">
+                    {product?.DiscountPrice?.toLocaleString()}₫
+                  </span>
+                  <span className="text-lg text-gray-400 line-through">
+                    {product?.SellingPrice?.toLocaleString()}₫
+                  </span>
                 </>
               )}
 
@@ -90,10 +116,10 @@ function ProductDetail() {
                     <svg
                       key={i}
                       className={`w-4 h-4 ${i < fullStars
-                        ? "text-yellow-300" // Full star
-                        : i === fullStars && hasHalfStar
-                          ? "text-yellow-300 half-star" // Half star
-                          : "text-gray-400" // Empty star
+                          ? "text-yellow-300" // Full star
+                          : i === fullStars && hasHalfStar
+                            ? "text-yellow-300 half-star" // Half star
+                            : "text-gray-400" // Empty star
                         }`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
@@ -128,24 +154,74 @@ function ProductDetail() {
             </div>
 
             <p className="text-gray-600 mb-4">
-              <span className="font-medium">Số lượng trong kho:</span> {product.Quantity}
+              <span className="font-medium">Số lượng trong kho:</span>{" "}
+              {product.Quantity}
             </p>
             <hr className="my-4" />
 
             <p className="text-gray-700 mb-6">
-              <span className="font-medium">Mô tả sản phẩm:</span> {product.Description}
+              <span className="font-medium">Mô tả sản phẩm:</span>{" "}
+              {product.Description}
             </p>
             <p className="text-gray-700 mb-6">
-              <span className="font-medium">Hãng sản xuất:</span> {product.BrandName}
+              <span className="font-medium">Hãng sản xuất:</span>{" "}
+              {product.BrandName}
             </p>
             <p className="text-gray-700 mb-6">
               <span className="font-medium">Quốc gia:</span> {product.Country}
             </p>
 
+            <div className="flex items-center mb-6">
+              <button
+                        onClick={handleDecrease}
+                        className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Decrease quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 2"
+                        >
+                          <path stroke="currentColor" d="M1 1h16" />
+                        </svg>
+                      </button>
+              <div>
+                <input
+                  type="number"
+                  id="first_product"
+                  value={numberPurchase}
+                  className="bg-gray-50 w-24 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  min="1"
+                  max={product.Quantity}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <button
+                        onClick={handleIncrease}
+                        className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Increase quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 18"
+                        >
+                          <path stroke="currentColor" d="M9 1v16M1 9h16" />
+                        </svg>
+                      </button>
+            </div>
+
             <div className="flex items-center gap-4">
               <Link
-                to={`/payment?productId=${id}`}
-                state={{ product }}
+                to={`/payment`}
+                state={{ selectedProducts: [{ ...product, ProductID: parseInt(id), Quantity: numberPurchase }] }}
                 className="bg-primary-500 text-white text-center px-4 py-2 rounded-md shadow hover:bg-primary-600 md:min-w-48"
               >
                 Mua ngay
@@ -175,15 +251,34 @@ function ProductDetail() {
                 className="flex gap-2 items-center justify-center bg-gray-200 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-300 md:min-w-48 cursor-pointer"
                 onClick={() => setIsLove(!isLove)}
               >
-                {isLove
-                  ? <svg className="w-6 h-6 text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                {isLove ? (
+                  <svg
+                    className="w-6 h-6 text-red-500"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z" />
                   </svg>
-                  : <svg className="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
+                ) : (
+                  <svg
+                    className="w-6 h-6 text-gray-800"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                    />
                   </svg>
-                }
-
+                )}
                 Yêu thích
               </div>
             </div>
@@ -191,44 +286,56 @@ function ProductDetail() {
         </div>
 
         <div className="mb-12 relative">
-          <p className="font-bold text-2xl text-gray-800 text-center mt-12 mb-8">Sản phẩm cùng thương hiệu</p>
+          <p className="font-bold text-2xl text-gray-800 text-center mt-12 mb-8">
+            Sản phẩm cùng thương hiệu
+          </p>
           <div className="flex flex-wrap justify-center gap-6">
             {getPaginatedProducts().map((product) => (
               <Product key={product.ProductID} product={product} />
             ))}
           </div>
 
-          {getPaginatedProducts().length === 0 &&
+          {getPaginatedProducts().length === 0 && (
             <div className="text-center text-gray-700 text-lg">
               Hiện chưa có sản phẩm nào.
-            </div>}
+            </div>
+          )}
 
           <div className="flex justify-center space-x-2">
-            {[...Array(Math.ceil(relatedProduct.length / pageSize))].map((_, index) => (
-              <button
-                key={index}
-                className={`w-2.5 h-2.5 rounded-full ${index + 1 === currentPage ? "bg-black" : "bg-gray-300"}`}
-                onClick={() => setCurrentPage(index + 1)}
-              />
-            ))}
+            {[...Array(Math.ceil(relatedProduct.length / pageSize))].map(
+              (_, index) => (
+                <button
+                  key={index}
+                  className={`w-2.5 h-2.5 rounded-full ${index + 1 === currentPage ? "bg-black" : "bg-gray-300"
+                    }`}
+                  onClick={() => setCurrentPage(index + 1)}
+                />
+              )
+            )}
           </div>
 
           <button
-            className={`${currentPage === 1 ? "hidden" : "block"} absolute top-1/2 left-0 transform -translate-y-1/2 bg-white shadow-md p-2 rounded-full opacity-70 transition duration-200 ease-in-out hover:opacity-100`}
+            className={`${currentPage === 1 ? "hidden" : "block"
+              } absolute top-1/2 left-0 transform -translate-y-1/2 bg-white shadow-md p-2 rounded-full opacity-70 transition duration-200 ease-in-out hover:opacity-100`}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
             <ChevronLeft className="w-6 h-6 text-gray-600" />
           </button>
 
-          {numProducts > pageSize &&
+          {numProducts > pageSize && (
             <button
               className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-white shadow-md p-2 rounded-full opacity-70 transition duration-200 ease-in-out hover:opacity-100"
-              onClick={() => setCurrentPage(currentPage % Math.ceil(relatedProduct.length / pageSize) + 1)}
+              onClick={() =>
+                setCurrentPage(
+                  (currentPage % Math.ceil(relatedProduct.length / pageSize)) +
+                  1
+                )
+              }
             >
               <ChevronRight className="w-6 h-6 text-gray-600" />
-            </button>}
+            </button>
+          )}
         </div>
-
       </div>
 
       <Review productID={id} product={product} />

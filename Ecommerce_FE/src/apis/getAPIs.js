@@ -69,10 +69,8 @@ export async function getCartDetail() {
     const response = await axiosInstance.get(`carts`);
   
     return response;
-  // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    // don't care
-    // console.log(error);
+    return error.response;
   }
 }
 

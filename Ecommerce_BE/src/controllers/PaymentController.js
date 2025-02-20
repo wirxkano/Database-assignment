@@ -7,15 +7,15 @@ const handleTransactionMomo = async (req, res) => {
   try {
     const accessKey = env.MOMO_ACCESS_KEY;
     const secretKey = env.MOMO_SECRET_KEY;
-    const orderInfo = 'pay with MoMo';
+    const orderInfo = `Thanh toán đơn hàng Arya shop`;
     const partnerCode = 'MOMO';
     const redirectUrl = env.FE_URL + '/orders';
-    const ipnUrl = env.BE_URL + '/api/payments/momo-callback'; // callback url
+    const ipnUrl = env.BE_URL + '/api/payments/card-callback'; // callback url
     const requestType = "payWithMethod";
-    const amount = '50000';
+    const amount = req.body.totalPrice;
     const orderId = partnerCode + new Date().getTime();
     const requestId = orderId;
-    const extraData = '';
+    const extraData = `data=${JSON.stringify(req.body)};userId=${JSON.stringify(req.userId)}`;
     const orderGroupId = '';
     const autoCapture = true;
     const lang = 'vi';
@@ -42,7 +42,7 @@ const handleTransactionMomo = async (req, res) => {
       autoCapture: autoCapture,
       extraData: extraData,
       orderGroupId: orderGroupId,
-      signature: signature
+      signature: signature,
     });
 
     const options = {
@@ -57,7 +57,7 @@ const handleTransactionMomo = async (req, res) => {
 
     try {
       const result = await axios(options);
-
+      
       return res.status(200).json(result.data);
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -72,9 +72,10 @@ const handleTransactionMomo = async (req, res) => {
 const callbackMomo = async (req, res) => {
   try {
     // update order status
-    console.log("momo callback: ", req.body);
-    
-    return res.status(200).json(req.body);
+    // console.log("momo callback: ", req.body);
+
+    await OrderController.storeOrder(req, res);
+    // return res.status(200).json(req.body);
   } catch (error) {
     console.log(error);
 
