@@ -28,6 +28,21 @@ const searchOrder = async (req, res) => {
 
 const storeOrder = async (req, res) => {
   try {
+    if (req.body.extraData && typeof req.body.extraData === 'string') {
+      const parts = req.body.extraData.split(';');
+      
+      const dataPart = parts.find(part => part.startsWith('data='));
+      const userIdPart = parts.find(part => part.startsWith('userId='));
+
+      if (dataPart) {
+        req.body = JSON.parse(dataPart.split('=')[1]); 
+      }
+      
+      if (userIdPart) {
+        req.userId = parseInt(JSON.parse(userIdPart.split('=')[1]));
+      }
+    }
+
     const result = await OrderModel.storeOrder(req.userId, req.body);
     if (result) {
       return res.status(200).json({ message: 'Create order successfully' });

@@ -14,14 +14,16 @@ function Cart() {
   useEffect(() => {
     const fetchCartDetail = async () => {
       const response = await getCartDetail();
-      console.log(response);
+
       if (response.status === 200) {
         setProducts(response.data);
+      } else if (response.status === 401) {
+        navigate('/login');
       }
     };
 
     fetchCartDetail();
-  }, []);
+  }, [navigate]);
 
   const handleIncreaseProducts = (productId) => {
     setProducts((prevProducts) =>
@@ -54,6 +56,7 @@ function Cart() {
       if (response.status === 200) {
         setProducts(response.data); // Cập nhật lại danh sách giỏ hàng
       }
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       alert("Failed to delete product. Please try again.");
     }

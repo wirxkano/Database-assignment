@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getRelatedProducts, productDetailsLoader } from "~/apis/getAPIs";
-import Navbar from "~/components/Navbar";
-import Product from "./Product";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Footer from "~/components/Footer";
-import Review from "../Review/Review";
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { getRelatedProducts, productDetailsLoader } from '~/apis/getAPIs';
+import Navbar from '~/components/Navbar';
+import Product from './Product';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Footer from '~/components/Footer';
+import Review from '../Review/Review';
 
 function ProductDetail() {
+  const location = useLocation();
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [relatedProduct, setRelatedProduct] = useState([]);
   const [isLove, setIsLove] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [numProducts, setNumProducts] = useState(0);
+  const [numberPurchase, setNumberPurchase] = useState(1);
   const pageSize = 3;
 
   useEffect(() => {
@@ -42,6 +44,35 @@ function ProductDetail() {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return relatedProduct.slice(startIndex, endIndex);
+  };
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.hash]);
+
+  const handleIncrease = () => {
+    if (numberPurchase < product.Quantity) {
+      setNumberPurchase((prev) => prev + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (numberPurchase > 1) {
+      setNumberPurchase((prev) => prev - 1);
+    }
+  };
+
+  const handleChange = (e) => {
+    const value = Math.max(
+      1,
+      Math.min(product.Quantity, Number(e.target.value))
+    );
+    setNumberPurchase(value);
   };
 
   return (
@@ -84,13 +115,12 @@ function ProductDetail() {
                   return (
                     <svg
                       key={i}
-                      className={`w-4 h-4 ${
-                        i < fullStars
+                      className={`w-4 h-4 ${i < fullStars
                           ? "text-yellow-300" // Full star
                           : i === fullStars && hasHalfStar
-                          ? "text-yellow-300 half-star" // Half star
-                          : "text-gray-400" // Empty star
-                      }`}
+                            ? "text-yellow-300 half-star" // Half star
+                            : "text-gray-400" // Empty star
+                        }`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -117,10 +147,9 @@ function ProductDetail() {
                   );
                 })}
 
-                <div className="underline hover:no-underline cursor-pointer">
-                  {product.AverageRate ? product.AverageRate.toFixed(1) : 0.0}{" "}
-                  Đánh giá
-                </div>
+                <Link to="#reviews-of-product" className="underline hover:no-underline cursor-pointer">
+                  {product.AverageRate ? product.AverageRate.toFixed(1) : 0.0} sao
+                </Link>
               </div>
             </div>
 
@@ -142,10 +171,57 @@ function ProductDetail() {
               <span className="font-medium">Quốc gia:</span> {product.Country}
             </p>
 
+            <div className="flex items-center mb-6">
+              <button
+                        onClick={handleDecrease}
+                        className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Decrease quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 2"
+                        >
+                          <path stroke="currentColor" d="M1 1h16" />
+                        </svg>
+                      </button>
+              <div>
+                <input
+                  type="number"
+                  id="first_product"
+                  value={numberPurchase}
+                  className="bg-gray-50 w-24 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  min="1"
+                  max={product.Quantity}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <button
+                        onClick={handleIncrease}
+                        className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                        type="button"
+                      >
+                        <span className="sr-only">Increase quantity</span>
+                        <svg
+                          className="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 18 18"
+                        >
+                          <path stroke="currentColor" d="M9 1v16M1 9h16" />
+                        </svg>
+                      </button>
+            </div>
+
             <div className="flex items-center gap-4">
               <Link
-                to={`/payment?productId=${id}`}
-                state={{ product }}
+                to={`/payment`}
+                state={{ selectedProducts: [{ ...product, ProductID: parseInt(id), Quantity: numberPurchase }] }}
                 className="bg-primary-500 text-white text-center px-4 py-2 rounded-md shadow hover:bg-primary-600 md:min-w-48"
               >
                 Mua ngay
@@ -230,9 +306,8 @@ function ProductDetail() {
               (_, index) => (
                 <button
                   key={index}
-                  className={`w-2.5 h-2.5 rounded-full ${
-                    index + 1 === currentPage ? "bg-black" : "bg-gray-300"
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full ${index + 1 === currentPage ? "bg-black" : "bg-gray-300"
+                    }`}
                   onClick={() => setCurrentPage(index + 1)}
                 />
               )
@@ -240,9 +315,8 @@ function ProductDetail() {
           </div>
 
           <button
-            className={`${
-              currentPage === 1 ? "hidden" : "block"
-            } absolute top-1/2 left-0 transform -translate-y-1/2 bg-white shadow-md p-2 rounded-full opacity-70 transition duration-200 ease-in-out hover:opacity-100`}
+            className={`${currentPage === 1 ? "hidden" : "block"
+              } absolute top-1/2 left-0 transform -translate-y-1/2 bg-white shadow-md p-2 rounded-full opacity-70 transition duration-200 ease-in-out hover:opacity-100`}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
             <ChevronLeft className="w-6 h-6 text-gray-600" />
@@ -254,7 +328,7 @@ function ProductDetail() {
               onClick={() =>
                 setCurrentPage(
                   (currentPage % Math.ceil(relatedProduct.length / pageSize)) +
-                    1
+                  1
                 )
               }
             >
@@ -264,7 +338,7 @@ function ProductDetail() {
         </div>
       </div>
 
-      <Review />
+      <Review productID={id} product={product} />
       <hr />
 
       <Footer />

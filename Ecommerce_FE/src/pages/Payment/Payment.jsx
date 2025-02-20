@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { userLoader } from "~/apis/getAPIs";
 import Navbar from "~/components/Navbar";
 import PaymentSumary from "~/pages/Payment/PaymentSumary";
@@ -14,13 +14,11 @@ function Payment() {
   const navigate = useNavigate();
   const products = location.state?.selectedProducts || [];
   const [userData, setUserData] = useState({});
-  const [numberPurchase, setNumberPurchase] = useState(1);
   const [isPopup, setIsPopup] = useState(false);
   const [addressIndex, setAddressIndex] = useState(0);
   const [appliedVoucher, setAppliedVoucher] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [searchParams] = useSearchParams();
-  const productId = searchParams.get("productId");
+  const [discountPrice, setDiscountPrice] = useState(0);
 
   useEffect(() => {
     if (!(sessionStorage.getItem("isLoggedIn") === "true")) {
@@ -67,7 +65,7 @@ function Payment() {
     (total, product) => total + product.SellingPrice * product.Quantity,
     0
   );
-  
+
   const totalDiscount = products.reduce(
     (total, product) =>
       total +
@@ -76,20 +74,34 @@ function Payment() {
         : 0),
     0
   );
-  
+
 
   const totalOrderAmount = totalSellingPrice - totalDiscount;
 
+  useEffect(() => {
+    if (!isEmpty(appliedVoucher)) {
+      if (appliedVoucher?.Title === 'FREESHIP') {
+        setDiscountPrice(SHIPPING_FEE);
+      } else {
+        setDiscountPrice(totalOrderAmount * appliedVoucher?.DiscountPercent / 100);
+      }
+    }
+  }, [appliedVoucher, totalOrderAmount]);
+
   const handlePurchase = async () => {
+
+    let purchasedProducts = products.map((product) => ({
+      productId: product.ProductID,
+      numberPurchase: product.Quantity,
+      priceAtOrderedTime: product.DiscountPrice
+        ? product.DiscountPrice
+        : product.SellingPrice
+    }))
+
     const data = {
       ...userData,
-      product: {
-        productId,
-        numberPurchase,
-        priceAtOrderedTime: product.DiscountPrice
-          ? product.DiscountPrice
-          : product.SellingPrice,
-      },
+      products: purchasedProducts,
+      totalPrice: totalOrderAmount + SHIPPING_FEE - discountPrice,
       selectedAddress: userData.addresses[addressIndex],
     };
 
@@ -219,11 +231,10 @@ function Payment() {
                 {userData.addresses.map((address, index) => (
                   <label
                     key={index}
-                    className={`flex justify-between items-center p-4 border rounded-md ${
-                      addressIndex === index
+                    className={`flex justify-between items-center p-4 border rounded-md ${addressIndex === index
                         ? "bg-teal-50 border-teal-200"
                         : "bg-gray-50 border-gray-300"
-                    } hover:shadow-md transition`}
+                      } hover:shadow-md transition`}
                   >
                     <span className="text-gray-800 dark:text-gray-200">
                       {`${address.street}, ${address.commune}, ${address.district}, ${address.city}`}
@@ -274,8 +285,8 @@ function Payment() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr className="bg-white border-b">
+              {products.map((product, idx) => (
+                <tr key={idx} className="bg-white border-b">
                   <td className="p-4">
                     <img
                       src={product.ImgUrl}
@@ -343,11 +354,11 @@ function Payment() {
                   <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                     {product.DiscountPrice
                       ? (
-                          product.DiscountPrice * product.Quantity
-                        )?.toLocaleString()
+                        product.DiscountPrice * product.Quantity
+                      )?.toLocaleString()
                       : (
-                          product.SellingPrice * product.Quantity
-                        )?.toLocaleString()}
+                        product.SellingPrice * product.Quantity
+                      )?.toLocaleString()}
                     đ
                   </td>
                 </tr>
@@ -364,7 +375,7 @@ function Payment() {
         <PaymentSumary
           totalPrice={totalOrderAmount}
           shippingFee={SHIPPING_FEE}
-          voucher={appliedVoucher}
+          discountPrice={discountPrice}
           paymentMethod={paymentMethod}
           setPaymentMethod={setPaymentMethod}
           onClick={handlePurchase}

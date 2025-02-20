@@ -34,9 +34,15 @@ function Navbar() {
   useEffect(() => {
     const fetchCartItems = async () => {
       const response = await getCartDetail();
-      if (response.status === 200) {
-        setCartItems(response.data);
-        setNumberItems(response.data.length);
+      try {
+        if (response.status === 200) {
+          setCartItems(response.data);
+          setNumberItems(response.data.length);
+        }
+      // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        //don't care
+        // console.log(error)
       }
     }
 
