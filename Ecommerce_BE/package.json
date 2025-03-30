@@ -1,7 +1,6 @@
 {
   "name": "ecommerce_be",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "cross-env BUILD_MODE=dev nodemon --exec babel-node ./src/server.js",
@@ -25,12 +24,18 @@
     "@babel/runtime": "^7.26.0",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
+    "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1",
-    "nodemon": "^3.1.7"
-  }
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "keywords": [],
+  "description": ""
 }

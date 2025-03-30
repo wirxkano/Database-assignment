@@ -67,7 +67,7 @@ export async function getProductsByKeyword(keyword) {
 export async function getCartDetail() {
   try {
     const response = await axiosInstance.get(`carts`);
-  
+
     return response;
   } catch (error) {
     return error.response;
@@ -75,7 +75,20 @@ export async function getCartDetail() {
 }
 
 export async function getCoupons() {
-  const coupons = await axiosInstance.get('coupons');
-  
+  const coupons = await axiosInstance.get("coupons");
+
   return coupons;
+}
+
+export const loginWithGoogle = () => {
+  window.location.href = "http://localhost:8000/auth/google";
+};
+
+export async function getGoogleUser() {
+  try {
+    const response = await axiosInstance.get("/auth/user");
+    return response.data;
+  } catch (erro) {
+    return null;
+  }
 }

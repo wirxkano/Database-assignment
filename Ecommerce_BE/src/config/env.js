@@ -18,5 +18,10 @@ export const env = {
   MOMO_SECRET_KEY: process.env.MOMO_SECRET_KEY,
 
   FE_URL: process.env.FE_URL,
-  BE_URL: process.env.BE_URL
+  BE_URL: process.env.BE_URL,
+  
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
+  SESSION_SECRET: process.env.SESSION_SECRET
 };

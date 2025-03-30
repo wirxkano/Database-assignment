@@ -6,7 +6,7 @@ export const authentication = async (req, res, next) => {
     const authCookie = req.cookies.SessionID;
 
     if (!authCookie) {
-      return res.status(401).json({ message: 'You must login first' });
+      return res.status(401).json({ message: "You must login first" });
     }
 
     jwt.verify(authCookie, env.SECRET_ACCESS_TOKEN, async (err, decoded) => {
